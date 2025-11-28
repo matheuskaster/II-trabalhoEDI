@@ -44,7 +44,7 @@ void fecha_svg (FILE* arq_svg);
 
 /// @brief É uma função que desenha todas as formas do plano.
 /// @param arq_svg É um arquivo do tipo FILE* para acessar o arquivo, já inicializado.
-/// @param plano É o local onde as formas se encontram.
-void svg (FILE* arq_svg, void* plano);
+/// @param chao É o local onde as formas se encontram.
+void svg (FILE* arq_svg, Lista chao);
 
 #endif

@@ -5,8 +5,8 @@ typedef void *Retangulo;
 
 /// @brief Cria um retângulo com os parâmetros informados.
 /// @param id Número inteiro e positivo identificador para saber a qual retângulo ele está se referindo.
-/// @param x É a coordenada no eixo x no qual a âncora do retângulo se encontra (o vértice do canto superior esquerdo).
-/// @param y É a coordenada no eixo y no qual a âncora do retângulo se encontra (o vértice do canto superior esquerdo).
+/// @param x É a coordenada no eixo x no qual a âncora do retângulo se encontra (o vértice do canto inferior esquerdo).
+/// @param y É a coordenada no eixo y no qual a âncora do retângulo se encontra (o vértice do canto inferior esquerdo).
 /// @param w É um número real correspondente a largura do retângulo.
 /// @param h É um número real correspondente a altura do retângulo.
 /// @param corb Indica a cor da borda do retângulo.

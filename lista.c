@@ -18,6 +18,7 @@ typedef struct {
     int tam;
     pont inicio;
     pont fim;
+    pont percorre;
 } lista;
 
 Lista cria_lista () {
@@ -28,8 +29,28 @@ Lista cria_lista () {
     }
     l->inicio = NULL;
     l->fim = NULL;
+    l->percorre = NULL;
     l->tam = 0;
     return ((lista*)l);
+}
+
+void percorrer_do_inicio_lista (Lista l) {
+    ((lista*)l)->percorre = ((lista*)l)->inicio;
+}
+
+bool tem_proximo_lista (Lista l) {
+    if (((lista*)l)->percorre != NULL) return true;
+    else return false;
+}
+
+Geometria get_proximo_lista (Lista l) {
+    if (((lista*)l)->percorre == NULL) {
+        printf("[ERRO] Não tem um próximo elemento. \n");
+        exit(1);
+    }
+    Geometria proximo = ((lista*)l)->percorre->chave;
+    ((lista*)l)->percorre = ((lista*)l)->percorre->prox;
+    return proximo;
 }
 
 int tam_lista (Lista l) {

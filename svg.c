@@ -30,11 +30,11 @@ void desenha_linha_svg (FILE* arq_svg, Linha l) {
 void desenha_texto_svg (FILE* arq_svg, Texto t, Estilo ts) {
     char a = get_a_texto(t);
            if (a == 'i') {
-        fprintf(arq_svg, "<text id=\"%d\" font-size=\"%s\" line-height=\"0\" text-anchor=\"start\" fill=\"%s\" stroke=\"%s\" font-family=\"%s\" y=\"%lf\" x=\"%lf\" stroke-width=\"%lf\" ><![CDATA[%s]]></text>\n", get_id_texto(t), get_size_estilo(ts), get_corp_texto(t), get_corb_texto(t), get_family_estilo(ts), get_y_texto(t), get_x_texto(t), 1.0, get_txto(t));
+        fprintf(arq_svg, "<text id=\"%d\" font-size=\"%s\" line-height=\"0\" text-anchor=\"start\" fill=\"%s\" stroke=\"%s\" font-family=\"%s\" font-weight=\"%s\" y=\"%lf\" x=\"%lf\" stroke-width=\"%lf\" ><![CDATA[%s]]></text>\n", get_id_texto(t), get_size_estilo(ts), get_corp_texto(t), get_corb_texto(t), get_family_estilo(ts), get_weight_estilo(ts), get_y_texto(t), get_x_texto(t), 1.0, get_txto(t));
     } else if (a == 'm') {
-        fprintf(arq_svg, "<text id=\"%d\" font-size=\"%s\" line-height=\"0\" text-anchor=\"middle\" fill=\"%s\" stroke=\"%s\" font-family=\"%s\" y=\"%lf\" x=\"%lf\" stroke-width=\"%lf\" ><![CDATA[%s]]></text>\n", get_id_texto(t), get_size_estilo(ts), get_corp_texto(t), get_corb_texto(t), get_family_estilo(ts), get_y_texto(t), get_x_texto(t), 1.0, get_txto(t));
+        fprintf(arq_svg, "<text id=\"%d\" font-size=\"%s\" line-height=\"0\" text-anchor=\"middle\" fill=\"%s\" stroke=\"%s\" font-family=\"%s\" font-weight=\"%s\" y=\"%lf\" x=\"%lf\" stroke-width=\"%lf\" ><![CDATA[%s]]></text>\n", get_id_texto(t), get_size_estilo(ts), get_corp_texto(t), get_corb_texto(t), get_family_estilo(ts), get_weight_estilo(ts), get_y_texto(t), get_x_texto(t), 1.0, get_txto(t));
     } else if (a == 'f') {
-        fprintf(arq_svg, "<text id=\"%d\" font-size=\"%s\" line-height=\"0\" text-anchor=\"end\" fill=\"%s\" stroke=\"%s\" font-family=\"%s\" y=\"%lf\" x=\"%lf\" stroke-width=\"%lf\" ><![CDATA[%s]]></text>\n", get_id_texto(t), get_size_estilo(ts), get_corp_texto(t), get_corb_texto(t), get_family_estilo(ts), get_y_texto(t), get_x_texto(t), 1.0, get_txto(t));
+        fprintf(arq_svg, "<text id=\"%d\" font-size=\"%s\" line-height=\"0\" text-anchor=\"end\" fill=\"%s\" stroke=\"%s\" font-family=\"%s\" font-weight=\"%s\" y=\"%lf\" x=\"%lf\" stroke-width=\"%lf\" ><![CDATA[%s]]></text>\n", get_id_texto(t), get_size_estilo(ts), get_corp_texto(t), get_corb_texto(t), get_family_estilo(ts), get_weight_estilo(ts), get_y_texto(t), get_x_texto(t), 1.0, get_txto(t));
     }
 }
 
@@ -68,14 +68,13 @@ void fecha_svg(FILE* arq_svg) {
     fprintf(arq_svg, "</g>\n");
     fprintf(arq_svg,"</svg>\n");
 }
-/*
-void svg (FILE* arq_svg, Fila plano) {
-    Fila f = clona_fila (plano);
-    Geometria g = remove_fila(f);
-    while (g != NULL) {
-        desenha_forma_svg (arq_svg, g);
-        g = remove_fila(f);
+
+void svg (FILE* arq_svg, Lista chao) {
+    percorrer_do_inicio_lista(chao);
+    while (tem_proximo_lista(chao)) {
+        Geometria g = get_proximo_lista(chao);
+        if (g != NULL) {
+            desenha_forma_svg (arq_svg, g);
+        }
     }
-    libera_fila (f);
 }
-*/

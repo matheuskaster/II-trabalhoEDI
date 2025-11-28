@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void geo (void* plano, FILE* arq_geo) {
+void geo (Lista chao, FILE* arq_geo) {
     
     if(arq_geo == NULL){
         printf("Arquivo .geo não encontrado. \n");
@@ -19,7 +19,7 @@ void geo (void* plano, FILE* arq_geo) {
     int ultimo_id = 0;
 
     char linha[256];
-    char* comando = (char*)malloc(sizeof(char) * 3);
+    char comando[3];
     Estilo ts = NULL;
 
     while (fgets(linha, sizeof(linha), arq_geo) != NULL){
@@ -39,7 +39,7 @@ void geo (void* plano, FILE* arq_geo) {
                 ultimo_id = id;
             }
             Geometria g = cria_forma_circulo ('c', id, x, y, r, corb, corp);
-            //insere_fila (plano, g);
+            insere_lista (chao, g);
 
         } else if (strcmp(comando, "r") == 0) {
             int id;
@@ -50,7 +50,7 @@ void geo (void* plano, FILE* arq_geo) {
                 ultimo_id = id;
             }
             Geometria g = cria_forma_retangulo ('r', id, x, y, w, h, corb, corp);
-            //insere_fila (plano, g);
+            insere_lista (chao, g);
 
         } else if (strcmp(comando, "l") == 0) {
             int id;
@@ -61,7 +61,7 @@ void geo (void* plano, FILE* arq_geo) {
                 ultimo_id = id;
             }
             Geometria g = cria_forma_linha ('l', id, x1, y1, x2, y2, cor);
-            //insere_fila (plano, g);
+            insere_lista (chao, g);
 
         } else if (strcmp(comando, "t") == 0) {
             int id;
@@ -77,7 +77,7 @@ void geo (void* plano, FILE* arq_geo) {
                 ts = cria_estilo("sans", "normal", "15");
             } 
             Geometria g = cria_forma_texto ('t', id, x, y, corb, corp, a, txto, ts);
-            //insere_fila (plano, g);
+            insere_lista (chao, g);
 
         } else if (strcmp(comando, "ts") == 0) {
             char family[8], weight[3], size[3];
@@ -92,4 +92,5 @@ void geo (void* plano, FILE* arq_geo) {
             }
         }
     }
+    armazena_ultimo_id (ultimo_id);
 }
