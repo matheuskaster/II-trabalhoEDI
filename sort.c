@@ -27,7 +27,7 @@ void merge_sort (int vetor[], int aux[], int ini, int fim) {
         k++;
     }
 
-    while (i < meio) {
+    while (i <= meio) {
         aux[k] = vetor[i];
         i++;
         k++;
@@ -38,7 +38,7 @@ void merge_sort (int vetor[], int aux[], int ini, int fim) {
         k++;
     }
 
-    for (int i = ini; i < fim; i++) {
+    for (i = ini; i <= fim; i++) {
         vetor[i] = aux[i];
     }
 }

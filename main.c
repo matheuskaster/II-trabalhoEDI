@@ -65,10 +65,11 @@ int main(int argc, char *argv[]) {
     char* path_svg_geo = atualiza_extensao (dir_saida, arq_geo, ".svg");
     file_svg_geo = fopen(path_svg_geo, "w");
     if (!file_svg_geo) { 
-        printf("Erro ao criar SVG GEO.\n");
+        printf("[ERRO] não foi possível abrir o svg do .geo.\n");
         return 1;
     }
     free(path_svg_geo);
+
 
     Lista chao = cria_lista();
     geo(chao, file_geo);
@@ -76,15 +77,14 @@ int main(int argc, char *argv[]) {
     svg(file_svg_geo, chao);
     fecha_svg(file_svg_geo);
 
-
-
     if (strlen(arq_qry) > 0) {
-        printf("\n--- Processando QRY ---\n");
 
         char* path_qry = monta_caminho_completo(dir_entrada, arq_qry);
         file_qry = fopen(path_qry, "r");
-        if (!file_qry) { printf("Erro ao abrir QRY: %s\n", path_qry); return 1; }
-        printf("Lendo: %s\n", path_qry);
+        if (!file_qry) { 
+            printf("[ERRO] nãofoi possível abrir o .qry: %s\n", path_qry);
+            return 1; 
+        }
         free(path_qry);
 
         char* path_svg_qry = atualiza_extensao(dir_saida, arq_qry, ".svg");

@@ -17,7 +17,7 @@ typedef struct elemento* pont;
 typedef struct {
     int tam;
     pont inicio;
-    pont prox;
+    pont fim;
 } lista;
 
 Lista cria_lista () {
@@ -27,6 +27,7 @@ Lista cria_lista () {
         exit(1);
     }
     l->inicio = NULL;
+    l->fim = NULL;
     l->tam = 0;
     return ((lista*)l);
 }
@@ -42,8 +43,16 @@ void insere_lista (Lista l, Geometria g) {
         exit(1);
     }
     novo->chave = g;
-    novo->prox = ((lista*)l)->inicio;
-    ((lista*)l)->inicio = novo;
+    novo->prox = NULL;
+
+    if (((lista*)l)->inicio == NULL) {
+            ((lista*)l)->inicio = novo;
+    } else {
+        ((lista*)l)->fim->prox = novo;
+    }
+    
+    ((lista*)l)->fim = novo;
+    ((lista*)l)->tam++;
 }
 
 Geometria remove_lista (Lista l) {
@@ -58,14 +67,18 @@ Geometria remove_lista (Lista l) {
 //        ant = atual;
 //        atual = atual->prox;
 //    }
+
     if (atual == NULL) {
         printf("Não foi possível encontrar o elemento desejado da lista. \n");
         return;
     }
 
     if (ant == NULL) ((lista*)l)->inicio = atual->prox;
-//    else ant->prox = atual->prox;    
-    return atual;
+//    else ant->prox = atual->prox;
+    Geometria chave = atual->chave;
+    free(atual);
+    ((lista*)l)->tam--;
+    return chave;
 }
 
 Lista clona_lista (Lista l) {
