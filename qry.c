@@ -1,5 +1,6 @@
 #include "geo.h"
 #include "geometria.h"
+#include "bomba.h"
 #include "sobreposicao.h"
 #include "qry.h"
 #include "svg.h"
@@ -7,17 +8,13 @@
 #include "string.h"
 #include <stdlib.h>
 
+void qry (Lista chao, FILE* file_qry, FILE* file_svg_qry, FILE* file_txt) {
 
-void qry (Fila chao, FILE* file_qry, FILE* file_svg_qry, FILE* file_txt) {
-
+    Vetor vet = cria_vet();
     abre_svg(file_svg_qry);
 
     char linha[512];
     char comando[4];
-    
-    double potuacao = 0.0;
-    int num_clones = 0, num_esmagadas = 0;
-    int num_disparos = 0;
     
     while (fgets(linha, sizeof(linha), file_qry) != NULL) {
         if(linha[0] == '\n' || linha[0] == '\r'){
@@ -30,23 +27,29 @@ void qry (Fila chao, FILE* file_qry, FILE* file_svg_qry, FILE* file_txt) {
             int i, j;
             char direcao;
             sscanf(linha, "a %i %i %c", &i, &j, &direcao);
+            a(i, j, direcao, chao, file_txt, vet);
         }
         else if (strcmp(comando, "d") == 0) {
             double x, y;
-            sscanf(linha, "d %lf %lf", &x, &y, sfx);
+            char sfx[8];
+            sscanf(linha, "d %lf %lf %s", &x, &y, sfx);
+            d(x, y, sfx, chao, file_txt, file_svg_qry);
         }
         else if (strcmp(comando, "p") == 0) {
             double x, y;
-            char *cor = (char*)malloc(strlen(cor)+1);
-            if (cor == NULL) {
-                printf("Erro ao alocar memória para a cor da bomba. \n");
-                exit(1);
-            }
-            sscanf(linha,"p %lf %lf %i", &x, &y, &cor, sfx);
+            char cor[8], sfx[8];
+            sscanf(linha,"p %lf %lf %s %s", &x, &y, cor, sfx);
+            p(x, y, cor, sfx, file_txt, file_svg_qry);
         }
         else if (strcmp(comando, "cln") == 0) {
             double x, y, dx, dy;
-            sscanf(linha, "cln %i %c %i", &x, &y, &dx, &dy, sfx);
+            char sfx[8];
+            sscanf(linha, "cln %lf %lf %lf %lf %s", &x, &y, &dx, &dy, sfx);
+            cln(x, y, dx, dy, sfx, file_txt, file_svg_qry);
         }
     }
+    svg (file_svg_qry, chao);
+    fecha_svg(file_svg_qry);
+    libera_lista(chao);
+    libera_vet (vet);
 }

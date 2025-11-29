@@ -11,12 +11,12 @@ Lista cria_lista();
 
 /// @brief O ponteiro que vai percorrer a lista, começará apontando pro início da fila.
 /// @param l É um ponteiro que aponta para a lista l.
-void percorrer_do_inicio(Lista l);
+void percorrer_do_inicio_lista(Lista l);
 
 /// @brief Verifica ainda tem algum elemento da lista para ser percorrido.
 /// @param l É um ponteiro que aponta para a lista l.
 /// @return Retorna um bool, true se tem outros elementos para percorrer, ou false, caso contrário.
-bool tem_proximo(Lista l);
+bool tem_proximo_lista(Lista l);
 
 /// @brief Se existir, entrega próximo elemento da lista desde a última vez que essa função foi chamada, sem de fato remover da lista, só serve para
 /// observar quem está na lista.
