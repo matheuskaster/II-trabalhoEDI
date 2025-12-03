@@ -12,6 +12,7 @@ void qry (Lista chao, FILE* file_qry, FILE* file_svg_qry, FILE* file_txt) {
 
     Vetor vet = cria_vet();
     abre_svg(file_svg_qry);
+    cria_caixa_infinita(vet);
 
     char linha[512];
     char comando[4];

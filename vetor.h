@@ -19,6 +19,12 @@ void insere_vet (Vetor vet, Segmento s);
 /// @return Retorna o anteparo desejado.
 Segmento busca_vet (Vetor vet, int id);
 
+/// @brief Retorna o segmento que está na posição do vetor que ele informou que queria.
+/// @param vet É o ponteiro para o vetor de anteparos.
+/// @param posicao É um número inteiro que indica de qual posição do vetor ele quer que seja retornado.
+/// @return Retorna o segmento daquela posição do vetor.
+Segmento get_segmento_qualquer(Vetor vet, int posicao);
+
 /// @brief Libera toda a memória alocada pelo vetor de anteparos novamente a disponibilizando para uso.
 /// @param d É o ponteiro para saber acessar o vetor que terá sua memória liberada.
 void libera_vet (Vetor vet);

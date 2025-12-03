@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "sort.h"
 
-void merge_sort (int vetor[], int aux[], int ini, int fim) {
+void merge_sort (int* vetor, int* aux, int ini, int fim) {
     int meio, i, j, k;
 
     meio = (ini + fim) / 2;
@@ -41,4 +41,16 @@ void merge_sort (int vetor[], int aux[], int ini, int fim) {
     for (i = ini; i <= fim; i++) {
         vetor[i] = aux[i];
     }
+}
+
+void insertion_sort (int* vet, int fim, int tam) {
+    if (fim >= tam) return;
+    int aux, j = fim;
+    aux = vet[j];
+    while (j > 0 && aux < vet[j - 1]) {
+        vet[j] = vet[j - 1];
+        j--;
+    }
+    vet[j] = aux;
+    insertion_sort(vet, fim + 1, tam);
 }
