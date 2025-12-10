@@ -79,3 +79,10 @@ bounding_box get_limite (Geometria g) {
     }
     return bb;
 }
+
+Ponto interseccao_biombo (double x_bomba, double y_bomba, double angulo, Segmento s) {
+    double raio_x = x_bomba + 100000 * cos(angulo);
+    double raio_y = y_bomba + 100000 * sin(angulo);
+
+    return intercecc
+}

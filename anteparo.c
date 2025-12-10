@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "anteparo.h"
 
 typedef struct {
@@ -13,6 +15,17 @@ typedef struct {
     char* cor; 
     Geometria original;
 } segmento;
+
+Ponto transforma_ponto(double x, double y) {
+    ponto* p = (ponto*) malloc(sizeof(ponto));
+    if (p == NULL) {
+        printf("Erro de memoria em transforma_ponto. \n");
+        exit(1);
+    }
+    p->x = x;
+    p->y = y;
+    return p;
+}
 
 Segmento transforma_anteparo (int id, double x1, double y1, double x2, double y2, char tipo, char* cor, Geometria g) {
     segmento* s = (segmento*)malloc(sizeof(segmento));

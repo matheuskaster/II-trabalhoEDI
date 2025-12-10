@@ -1,22 +1,39 @@
 #include <stdio.h>
 #include "sort.h"
 
-void merge_sort (int* vetor, int* aux, int ini, int fim) {
-    int meio, i, j, k;
+void insertion_sort(void** vet, int ini, int fim, Comparador cmp) {
+    for (int i = ini + 1; i <= fim; i++) {
+        void* aux = vet[i];
+        int j = i - 1;
 
-    meio = (ini + fim) / 2;
+        while (j >= ini && cmp(&aux, &vet[j]) == -1) { 
+            vet[j + 1] = vet[j];
+            j--;
+        }
+        vet[j + 1] = aux;
+    }
+}
 
-    if (ini < fim) {
-        merge_sort (vetor, aux, ini, meio);
-        merge_sort (vetor, aux, meio + 1, fim);
+void merge_sort (void** vetor, void** aux, int ini, int fim, int menos_i, Comparador cmp) {
+
+    if ((fim - ini + 1) <= menos_i) {
+        insertion_sort(vetor, ini, fim, cmp);
+        return;
     }
 
-    i = ini;
-    j = meio + 1;
-    k = ini;
+    int meio = (ini + fim) / 2;
+
+    if (ini < fim) {
+        merge_sort (vetor, aux, ini, meio,  menos_i, cmp);
+        merge_sort (vetor, aux, meio + 1, fim, menos_i, cmp);
+    }
+
+    int i = ini;
+    int j = meio + 1;
+    int k = ini;
 
     while (i <= meio && j <= fim) {
-        if (vetor[i] < vetor[j]) {
+        if (cmp(&vetor[i], &vetor[j]) <= 0) {
             aux[k] = vetor[i];
             i++;
         }
@@ -41,16 +58,4 @@ void merge_sort (int* vetor, int* aux, int ini, int fim) {
     for (i = ini; i <= fim; i++) {
         vetor[i] = aux[i];
     }
-}
-
-void insertion_sort (int* vet, int fim, int tam) {
-    if (fim >= tam) return;
-    int aux, j = fim;
-    aux = vet[j];
-    while (j > 0 && aux < vet[j - 1]) {
-        vet[j] = vet[j - 1];
-        j--;
-    }
-    vet[j] = aux;
-    insertion_sort(vet, fim + 1, tam);
 }

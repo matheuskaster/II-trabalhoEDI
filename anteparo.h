@@ -5,6 +5,12 @@
 typedef void* Ponto;
 typedef void* Segmento;
 
+/// @brief Recebe duas coordenadas e retorna um tipo Ponto, que armazena os dois. Para converter e padronizar, mais fácil de utilizar funções que usam ponto.
+/// @param x É um número double que indica em qual posição do eixo 'x' estará localizado o ponto que será criado.
+/// @param y É um número double que indica em qual posição do eixo 'y' estará localizado o ponto que será criado.
+/// @return Retorna um ponto, nas duas coordenadas passadas por parâmetro.
+Ponto transforma_ponto(double x, double y);
+
 /// @brief Recebe uma geometria, identifica a que forma ela se refere, e retorna os segmentos da forma transformada em anteparo.
 /// @param id É um número inteiro único para poder identificar um segmento específico.
 /// @param x1 É a coordenada no eixo 'x' do primeiro ponto do segmento.
@@ -15,13 +21,7 @@ typedef void* Segmento;
 /// @param cor É uma string de char que representa uma cor no padrão do SVG, (red, green, blue).
 /// @param g É um ponteiro que aponta para qual é a geometria que originou os segmentos gerados.
 /// @return Retorna o segmento que acabou de ser transformado
-Segmento transforma_anteparo(double x1, double y1, double x2, double y2, char tipo, char* cor, Geometria g);
-
-/// @brief Recebe duas coordenadas e retorna um tipo Ponto, que armazena os dois. Para converter e padronizar, mais fácil de utilizar funções que usam ponto.
-/// @param x É um número double que indica em qual posição do eixo 'x' estará localizado o ponto que será criado.
-/// @param y É um número double que indica em qual posição do eixo 'y' estará localizado o ponto que será criado.
-/// @return Retorna um ponto, nas duas coordenadas passadas por parâmetro.
-Ponto transforma_ponto(double x, double y);
+Segmento transforma_anteparo(int id, double x1, double y1, double x2, double y2, char tipo, char* cor, Geometria g);
 
 /// @brief Recebe um ponto qualquer, e retorna qual o valor do 'x' dele, onde ele se encontra no eixo 'x'.
 /// @param p É um ponteiro que aponta para o ponto.
