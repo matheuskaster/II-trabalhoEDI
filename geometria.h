@@ -116,6 +116,14 @@ void set_corp_forma (Geometria g, char* corp);
 /// @return Retorna qual é a cor de preenchimento da forma.
 char* get_corp_forma(Geometria g);
 
+/// @brief Pega o último id encontrado, entre todas as formas do geo, o declara como o ultimo id, e guarda o valor dele.
+/// @param ultimo_id É o número inteiro, que corresponde ao valor do ultimo id encontrado.
+void armazena_ultimo_id(int ultimo_id);
+
+/// @brief Função responsável para possibilitar o acesso ao valor do último id para outros módulos, com a finalidade de continuar sempre fazendo identificadores únicos.
+/// @return Retorna o valor inteiro correspondente ao valor do último id encontrado.
+int get_ultimo_id();
+
 /// @brief Recebe uma forma e clona ela, ou seja, faz uma cópia com os mesmos atributos, entretanto altera qual é o id da forma.
 /// @param g É um ponteiro que aponta para a forma.
 /// @return Retorna a forma clonada.

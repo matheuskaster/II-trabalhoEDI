@@ -11,111 +11,6 @@
 #define PATH_LEN 250
 #define FILE_NAME_LEN 100
 
-int main(int argc, char *argv[]) {
-    char dir_entrada[PATH_LEN] = "./";
-    char dir_saida[PATH_LEN] = "";
-    char arq_geo[FILE_NAME_LEN] = "";
-    char arq_qry[FILE_NAME_LEN] = "";
-    char tipo_ordenacao = 'q';
-
-    FILE *file_geo = NULL; 
-    FILE *file_qry = NULL;
-    FILE *file_svg_geo = NULL; 
-    FILE *file_svg_qry = NULL; 
-    FILE *file_txt = NULL;
-
-    int i = 1;
-    while (i < argc) {
-        if (strcmp(argv[i], "-e") == 0) {
-            i++;
-            trataPath(dir_entrada, PATH_LEN, argv[i]);
-        } 
-        else if (strcmp(argv[i], "-o") == 0) {
-            i++;    
-            trataPath(dir_saida, PATH_LEN, argv[i]);
-        } 
-        else if (strcmp(argv[i], "-f") == 0) {
-            i++;
-            trataNomeArquivo(arq_geo, FILE_NAME_LEN, argv[i]);
-        } 
-        else if (strcmp(argv[i], "-q") == 0) {
-            i++;
-            trataNomeArquivo(arq_qry, FILE_NAME_LEN, argv[i]);
-        } 
-        else if (strcmp(argv[i], "-to") == 0) {
-            i++;
-            tipo_ordenacao = argv[i][0];
-        }
-        i++;
-    }
-
-    if (strlen(arq_geo) == 0 || strlen(dir_saida) == 0) {
-        printf("Faltando -f ou -o, parâmetros que são obrigatórios. \n");
-        return 1;
-    }
-
-    char* path_geo = monta_caminho_completo(dir_entrada, arq_geo);
-    file_geo = fopen(path_geo, "r");
-    if (!file_geo) { 
-        printf("[ERRO] não foi possível abrir o .geo: %s\n", path_geo);
-        return 1; 
-    }
-    free(path_geo);
-
-    char* path_svg_geo = atualiza_extensao (dir_saida, arq_geo, ".svg");
-    file_svg_geo = fopen(path_svg_geo, "w");
-    if (!file_svg_geo) { 
-        printf("[ERRO] não foi possível abrir o svg do .geo.\n");
-        return 1;
-    }
-    free(path_svg_geo);
-
-
-    Lista chao = cria_lista();
-    geo(chao, file_geo);
-    abre_svg(file_svg_geo);
-    svg(file_svg_geo, chao);
-    fecha_svg(file_svg_geo);
-
-    if (strlen(arq_qry) > 0) {
-
-        char* path_qry = monta_caminho_completo(dir_entrada, arq_qry);
-        file_qry = fopen(path_qry, "r");
-        if (!file_qry) { 
-            printf("[ERRO] nãofoi possível abrir o .qry: %s\n", path_qry);
-            return 1; 
-        }
-        free(path_qry);
-
-        char* path_svg_qry = atualiza_extensao(dir_saida, arq_qry, ".svg");
-        char* path_txt_qry = atualiza_extensao(dir_saida, arq_qry, ".txt");
-
-        file_svg_qry = fopen(path_svg_qry, "w");
-        file_txt     = fopen(path_txt_qry, "w");
-        
-        free(path_svg_qry);
-        free(path_txt_qry);
-
-        if (file_svg_qry && file_txt) {
-            qry(chao, file_qry, file_svg_qry, file_txt); 
-        }
-    }
-
-    libera_lista(chao);
-
-    if (file_geo)     fclose(file_geo);
-    if (file_svg_geo) fclose(file_svg_geo);
-    if (file_qry)     fclose(file_qry);
-    if (file_svg_qry) fclose(file_svg_qry);
-    if (file_txt)     fclose(file_txt);
-
-    return 0;
-}
-
-
-
-
-
 void trataPath(char *path, int tamMax, char *arg) {
     int argLen = strlen(arg);
     assert(argLen < tamMax);
@@ -135,7 +30,7 @@ void extrai_nome_base(char* arq_qry, char* nome_base_qry) {
         return;
     }
 
-    char nome_base_tmp[strlen(arq_qry)]; 
+    char nome_base_tmp[strlen(arq_qry) + 1]; 
     char* ultimo_ponto = strrchr(arq_qry, '.');
     int len_ent;
 
@@ -184,4 +79,123 @@ char* atualiza_extensao (const char* dir_saida, const char* nome_arq_entrada, co
     free(nome_com_ext);
 
     return path_final;
+}
+
+int main(int argc, char *argv[]) {
+    char dir_entrada[PATH_LEN] = "./";
+    char dir_saida[PATH_LEN] = "";
+    char arq_geo[FILE_NAME_LEN] = "";
+    char arq_qry[FILE_NAME_LEN] = "";
+    char tipo_ordenacao = 'q';
+    int menos_i = 15;
+
+    FILE *file_geo = NULL; 
+    FILE *file_qry = NULL;
+    FILE *file_svg_geo = NULL; 
+    FILE *file_svg_qry = NULL; 
+    FILE *file_txt = NULL;
+
+    int i = 1;
+    while (i < argc) {
+        if (strcmp(argv[i], "-i") == 0) {
+            if (i + 1 < argc) {
+                i++;
+                menos_i = atoi(argv[i]);
+            }
+        }
+        if (strcmp(argv[i], "-e") == 0) {
+            if (i + 1 < argc) {
+                i++;
+            trataPath(dir_entrada, PATH_LEN, argv[i]);
+            }
+        } 
+        else if (strcmp(argv[i], "-o") == 0) {
+            if (i + 1 < argc) {
+                i++;    
+            trataPath(dir_saida, PATH_LEN, argv[i]);
+            }
+        } 
+        else if (strcmp(argv[i], "-f") == 0) {
+            if (i + 1 < argc) {
+                i++;
+            trataNomeArquivo(arq_geo, FILE_NAME_LEN, argv[i]);
+            }
+        } 
+        else if (strcmp(argv[i], "-q") == 0) {
+            if (i + 1 < argc) {
+                i++;
+            trataNomeArquivo(arq_qry, FILE_NAME_LEN, argv[i]);
+            }
+        } 
+        else if (strcmp(argv[i], "-to") == 0) {
+            if (i + 1 < argc) {
+                i++;
+            tipo_ordenacao = argv[i][0]
+            };
+        }
+        i++;
+    }
+
+    if (strlen(arq_geo) == 0 || strlen(dir_saida) == 0) {
+        printf("Faltando -f ou -o, parâmetros que são obrigatórios. \n");
+        return 1;
+    }
+
+    char* path_geo = monta_caminho_completo(dir_entrada, arq_geo);
+    file_geo = fopen(path_geo, "r");
+    if (!file_geo) { 
+        printf("[ERRO] não foi possível abrir o .geo: %s\n", path_geo);
+        return 1; 
+    }
+    free(path_geo);
+
+    char* path_svg_geo = atualiza_extensao (dir_saida, arq_geo, ".svg");
+    file_svg_geo = fopen(path_svg_geo, "w");
+    if (!file_svg_geo) { 
+        fclose(file_geo);
+        printf("[ERRO] não foi possível abrir o svg do .geo.\n");
+        return 1;
+    }
+    free(path_svg_geo);
+
+
+    Lista chao = cria_lista();
+    geo(chao, file_geo);
+    abre_svg(file_svg_geo);
+    svg(file_svg_geo, chao);
+    fecha_svg(file_svg_geo);
+
+    if (strlen(arq_qry) > 0) {
+
+        char* path_qry = monta_caminho_completo(dir_entrada, arq_qry);
+        file_qry = fopen(path_qry, "r");
+        if (!file_qry) { 
+            printf("[ERRO] não foi possível abrir o .qry: %s\n", path_qry);
+            return 1; 
+        }
+        free(path_qry);
+
+        char* path_svg_qry = atualiza_extensao(dir_saida, arq_qry, ".svg");
+        char* path_txt_qry = atualiza_extensao(dir_saida, arq_qry, ".txt");
+
+        file_svg_qry = fopen(path_svg_qry, "w");
+        file_txt     = fopen(path_txt_qry, "w");
+        
+        free(path_svg_qry);
+        free(path_txt_qry);
+
+        if (file_svg_qry && file_txt) {
+            qry(chao, file_qry, file_svg_qry, file_txt, tipo_ordenacao, menos_i); 
+        }
+    }
+
+    libera_lista(chao);
+
+    if (file_geo)     fclose(file_geo);
+    if (file_svg_geo) fclose(file_svg_geo);
+    if (file_qry)     fclose(file_qry);
+    if (file_svg_qry) fclose(file_svg_qry);
+    if (file_txt)     fclose(file_txt);
+
+    return 0;
 }
