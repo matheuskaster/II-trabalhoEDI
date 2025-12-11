@@ -1,3 +1,4 @@
+/*
 #include <stdio.h>
 #include "sort.h"
 
@@ -20,3 +21,4 @@ int main () {
     printf("Vetor ordenado: ");
     print_vet(vet);
 }
+*/

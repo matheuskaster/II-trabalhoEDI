@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "bomba.h"
 #include "geometria.h"
 #include "poligono.h"
 #include "sort.h"
 #include "arvore.h"
+#include "svg.h"
+#include "vetor.h"
 #define PI 3.14159265358979323846
 
 typedef struct {
@@ -54,7 +57,7 @@ int compara_vertices (void* a, void* b) {
     return 0;
 }
 
-void a (int i, int j, char direcao, Lista chao, FILE* file_txt, Vetor vet) {
+void a (int i, int j, char direcao, Lista chao, FILE* arq_txt, Vetor vet) {
     percorrer_do_inicio_lista(chao);
     Segmento s = NULL;
     int id;
@@ -85,6 +88,10 @@ void a (int i, int j, char direcao, Lista chao, FILE* file_txt, Vetor vet) {
                         x2 = x + raio;
                         y2 = y;
                     }
+
+                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
+                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x1, y1, x2, y2);
+
                 break;
             }
             case 'r': {
@@ -96,12 +103,24 @@ void a (int i, int j, char direcao, Lista chao, FILE* file_txt, Vetor vet) {
                 char tipo_anteparo = 'a';
                 char* cor = {"#000000"};
                 s = transforma_anteparo (ultimo_id++, x, y, xw, y, tipo_anteparo, cor, g);
+
+                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
+                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x, y, xw, y);
                 insere_vet(vet, s);
                 s = transforma_anteparo (ultimo_id++, xw, y, xw, yh, tipo_anteparo, cor, g);
+
+                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
+                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, xw, y, xw, yh);
                 insere_vet(vet, s);
                 s = transforma_anteparo (ultimo_id++, xw, yh, x, yh, tipo_anteparo, cor, g);
+
+                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
+                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, xw, yh, x, yh);
                 insere_vet(vet, s);
                 s = transforma_anteparo (ultimo_id++, x, yh, x, y, tipo_anteparo, cor, g);
+
+                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
+                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x, yh, x, y);
                 insere_vet(vet, s);
                 break;
             }
@@ -112,6 +131,9 @@ void a (int i, int j, char direcao, Lista chao, FILE* file_txt, Vetor vet) {
                 x2 = get_x2_linha(l);
                 y2 = get_y2_linha(l);
                 
+                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
+                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x1, y1, x2, y2);
+
                 break;
             }
             case 't': {
@@ -138,6 +160,9 @@ void a (int i, int j, char direcao, Lista chao, FILE* file_txt, Vetor vet) {
                 y1 = y;
                 y2 = y;
                 
+                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
+                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x1, y1, x2, y2);
+
                 break;
             }
             }
@@ -154,8 +179,8 @@ void a (int i, int j, char direcao, Lista chao, FILE* file_txt, Vetor vet) {
 }
 
 
-void explosao (Vetor vet, double x_bomba, double y_bomba, char tipo_ordenacao, int menos_i) {
-    int qtd_anteparos = get_qtd_vetor(vet);
+Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenacao, int menos_i, Segmento* vetor_atingidos, int* qtd_atingidos) {
+    int qtd_anteparos = get_qtd_vet(vet);
     vertice* vv = malloc(sizeof(vertice) * qtd_anteparos * 4);
     int qtd_v = 0;
 
@@ -277,6 +302,10 @@ void explosao (Vetor vet, double x_bomba, double y_bomba, char tipo_ordenacao, i
         }
         Segmento novo_biombo = segmento_mais_proximo(seg_ativos);
         if (novo_biombo != biombo) {
+            if (*qtd_atingidos == 0 || vetor_atingidos[(*qtd_atingidos) - 1] != novo_biombo) {
+                vetor_atingidos[*qtd_atingidos] = novo_biombo;
+                (*qtd_atingidos)++;
+            }
             if (biombo != NULL) {
                 Ponto p = interseccao_raio_segmento(x_bomba, y_bomba, v->angulo, biombo);
                 insere_ponto_poligono(area_explosao, p);
@@ -293,4 +322,116 @@ void explosao (Vetor vet, double x_bomba, double y_bomba, char tipo_ordenacao, i
     free(vpv);
     free(vv);
     libera_arvore(seg_ativos);
+
+    return area_explosao;
+}
+
+void destroi (Lista chao, Poligono poly) {
+    percorrer_do_inicio_lista(chao);
+    while (tem_proximo_lista(chao)) {
+        Geometria g = get_proximo_lista(chao);
+        double x = get_x_forma(g);
+        double y = get_y_forma(g);
+        if (esta_dentro_poligono(poly, x, y)) {
+            libera_forma(g);
+        }
+    }
+}
+
+void pinta (Lista chao, Poligono poly, char* cor) {
+    percorrer_do_inicio_lista(chao);
+    while (tem_proximo_lista(chao)) {
+        Geometria g = get_proximo_lista(chao);
+        double x = get_x_forma(g);
+        double y = get_y_forma(g);
+        if (esta_dentro_poligono(poly, x, y)) {
+            set_corb_forma(g, cor);
+            set_corp_forma(g, cor);
+        }
+    }
+}
+
+void clona (Lista chao, Poligono poly, double dx, double dy) {
+    percorrer_do_inicio_lista(chao);
+    while (tem_proximo_lista(chao)) {
+        Geometria g = get_proximo_lista(chao);
+        double x = get_x_forma(g);
+        double y = get_y_forma(g);
+        if (esta_dentro_poligono(poly, x, y)) {
+            clona_forma(g, dx, dy);
+        }
+    }
+}
+
+void d(double x, double y, char* sfx, Lista chao, FILE* txt, FILE* svg, Vetor vet, char* path_svg_qry, char tipo_ordenacao, int menos_i) {
+    int max_seg = get_qtd_vet(vet);
+    Segmento* atingidos = (Segmento*) malloc(sizeof(Segmento) * max_seg);
+    int qtd = 0;
+    Poligono poly = explosao(x, y, vet, tipo_ordenacao, menos_i, atingidos, &qtd);
+    for (int i = 0; i < qtd; i++) {
+        Segmento s = atingidos[i]; 
+        libera_segmento(s);
+    }
+    if (strcmp(sfx, "-") == 0) {
+        desenha_poligono_explosao(svg, poly);
+    } else {
+        char svg_poligono[256];
+        sprintf(svg_poligono, "%s-%s.svg", path_svg_qry, sfx);
+        FILE* svg = fopen(svg_poligono, "w");
+        abre_svg(svg);
+        desenha_poligono_explosao(svg, poly);
+        fecha_svg(svg);
+        fclose(svg);
+    }
+    destroi(chao, poly);
+    libera_poligono(poly);
+}
+
+void p(double x, double y, char* cor, char* sfx, Lista chao, FILE* txt, FILE* svg, Vetor vet, char* path_svg_qry, char tipo_ordenacao, int menos_i) {
+    int max_seg = get_qtd_vet(vet);
+    Segmento* atingidos = (Segmento*) malloc(sizeof(Segmento) * max_seg);
+    int qtd = 0;
+    Poligono poly = explosao(x, y, vet, tipo_ordenacao, menos_i, atingidos, &qtd);
+    for (int i = 0; i < qtd; i++) {
+        Segmento s = atingidos[i]; 
+        set_cor_segmento(s, cor);
+    }
+    if (strcmp(sfx, "-") == 0) {
+        desenha_poligono_explosao(svg, poly);
+    } else {
+        char svg_poligono[256];
+        sprintf(svg_poligono, "%s-%s.svg", path_svg_qry, sfx);
+        FILE* svg = fopen(svg_poligono, "w");
+        abre_svg(svg);
+        desenha_poligono_explosao(svg, poly);
+        fecha_svg(svg);
+        fclose(svg);
+    }
+    pinta(chao, poly, cor);
+    libera_poligono(poly);
+}
+
+void cln(double x, double y, double dx, double dy, char* sfx, Lista chao, FILE* txt, FILE* svg, Vetor vet, char* path_svg_qry, char tipo_ordenacao, int menos_i) {
+    int max_seg = get_qtd_vet(vet);
+    Segmento* atingidos = (Segmento*) malloc(sizeof(Segmento) * max_seg);
+    int qtd = 0;
+    Poligono poly = explosao(x, y, vet, tipo_ordenacao, menos_i, atingidos, &qtd);
+    for (int i = 0; i < qtd; i++) {
+        Segmento s = atingidos[i]; 
+        Segmento clone = clona_segmento(s, dx, dy);
+        insere_vet(vet, clone);
+    }
+    if (strcmp(sfx, "-") == 0) {
+        desenha_poligono_explosao(svg, poly);
+    } else {
+        char svg_poligono[256];
+        sprintf(svg_poligono, "%s-%s.svg", path_svg_qry, sfx);
+        FILE* svg = fopen(svg_poligono, "w");
+        abre_svg(svg);
+        desenha_poligono_explosao(svg, poly);
+        fecha_svg(svg);
+        fclose(svg);
+    }
+    clona(chao, poly, dx, dy);
+    libera_poligono(poly);
 }

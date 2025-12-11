@@ -5,6 +5,7 @@
 #include "sobreposicao.h"
 #include "geometria.h"
 #include "arvore.h"
+#include "poligono.h"
 #define PI 3.14159265358979323846
 
 typedef struct {
@@ -83,6 +84,15 @@ bounding_box get_limite (Geometria g) {
     return bb;
 }
 
+bounding_box limite_poligono (double xmin, double ymin, double xmax, double ymax) {
+    bounding_box bb;
+    bb.x_min = xmin;
+    bb.y_min = ymin;
+    bb.x_max = xmax;
+    bb.y_max = ymax;
+    return bb;
+}
+
 double distancia_ao_quadrado (double x1, double y1, double x2, double y2) {
     return (x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1);
 }
@@ -97,6 +107,12 @@ bool p1_eh_inicio(double bx, double by, double x1, double y1, double x2, double 
     return false;
 }
 
+
+int orientation(double px, double py, double qx, double qy, double rx, double ry) {
+    double val = (qy - py) * (rx - qx) - (qx - px) * (ry - qy);
+    if (fabs(val) < 1e-9) return 0;
+    return (val > 0) ? 1 : 2;
+}
 
 int lado_ponto_relacao_segmento (Segmento st, Segmento sr, double bx, double by) {
     double st_x1 = get_x_p1(st);
@@ -142,12 +158,6 @@ int lado_ponto_relacao_segmento (Segmento st, Segmento sr, double bx, double by)
 bool onSegment(double px, double py, double qx, double qy, double rx, double ry) {
     if (qx <= fmax(px, rx) && qx >= fmin(px, rx) && qy <= fmax(py, ry) && qy >= fmin(py, ry)) return true;
     return false;
-}
-
-int orientation(double px, double py, double qx, double qy, double rx, double ry) {
-    double val = (qy - py) * (rx - qx) - (qx - px) * (ry - qy);
-    if (fabs(val) < 1e-9) return 0;
-    return (val > 0) ? 1 : 2;
 }
 
 bool segmentos_se_intersectam(Ponto p1, Ponto q1, Ponto p2, Ponto q2) {
@@ -197,13 +207,4 @@ Ponto interseccao_raio_segmento(double x_bomba, double y_bomba, double angulo, S
     double s_y2 = get_y_p2(s);
     Ponto impacto = get_interseccao_ponto(x_bomba, y_bomba, fim_raio_x, fim_raio_y, s_x1, s_y1, s_x2, s_y2);
     return impacto;
-}
-
-bool ponto_dentro_poly(int nvert, double *vert_x, double *vert_y, double tx, double ty) {
-    int i, j;
-    bool c = false;
-    for (i = 0, j = nvert-1; i < nvert; j = i++) {
-        if ( ((vert_y[i] > ty) != (vert_y[j] > ty)) && (tx < (vert_x[j] - vert_x[i]) * (ty - vert_y[i]) / (vert_y[j] - vert_y[i]) + vert_x[i]) ) c = !c;
-    }
-    return c;
 }

@@ -68,3 +68,28 @@ double get_y_p1 (Segmento s) {
 double get_y_p2 (Segmento s) {
     return (((segmento*)s)->p2.y);
 }
+
+int get_id_segmento (Segmento s) {
+    return (((segmento*)s)->id);
+}
+
+void libera_segmento (Segmento seg) {
+    segmento* s = (segmento*) seg;
+    if (s == NULL) return;
+    free(s->cor);
+    free(s);
+}
+
+void set_cor_segmento (Segmento seg, char* cor) {
+    segmento* s = (segmento*) seg;
+    if (s->cor != NULL) {
+        free(s->cor);
+    }
+    s->cor = (char*) malloc(strlen(cor) + 1);
+    strcpy(s->cor, cor);
+}
+
+Segmento clona_segmento (Segmento seg, double dx, double dy) {
+    segmento* s = (segmento*) seg;
+    return transforma_anteparo( get_ultimo_id() + 1, s->p1.x + dx, s->p1.y + dy, s->p2.x + dx, s->p2.y + dy, s->tipo, s->cor, s->original);
+}

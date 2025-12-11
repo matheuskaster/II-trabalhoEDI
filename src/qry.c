@@ -40,17 +40,16 @@ void qry (Lista chao, FILE* file_qry, FILE* file_svg_qry, FILE* file_txt, char* 
             double x, y;
             char cor[8], sfx[8];
             sscanf(linha,"p %lf %lf %s %s", &x, &y, cor, sfx);
-            p(x, y, cor, sfx, file_txt, file_svg_qry, vet, path_svg_qry, tipo_ordenacao, menos_i);
+            p(x, y, cor, sfx, chao, file_txt, file_svg_qry, vet, path_svg_qry, tipo_ordenacao, menos_i);
         }
         else if (strcmp(comando, "cln") == 0) {
             double x, y, dx, dy;
             char sfx[8];
             sscanf(linha, "cln %lf %lf %lf %lf %s", &x, &y, &dx, &dy, sfx);
-            cln(x, y, dx, dy, sfx, file_txt, file_svg_qry, vet, path_svg_qry, tipo_ordenacao, menos_i);
+            cln(x, y, dx, dy, sfx, chao, file_txt, file_svg_qry, vet, path_svg_qry, tipo_ordenacao, menos_i);
         }
     }
     svg (file_svg_qry, chao);
     fecha_svg(file_svg_qry);
-    libera_lista(chao);
     libera_vet (vet);
 }

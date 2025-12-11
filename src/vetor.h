@@ -25,6 +25,11 @@ Segmento busca_vet (Vetor vet, int id);
 /// @return Retorna o segmento daquela posição do vetor.
 Segmento get_segmento_qualquer(Vetor vet, int posicao);
 
+/// @brief Informa qual que é a quantidade de itens que existem dentro do vetor.
+/// @param vet É um ponteiro que aponta para a posição do vetor.
+/// @return Retorna o número de elementos que o vetor possui.
+int get_qtd_vet(Vetor vet);
+
 /// @brief Libera toda a memória alocada pelo vetor de anteparos novamente a disponibilizando para uso.
 /// @param d É o ponteiro para saber acessar o vetor que terá sua memória liberada.
 void libera_vet (Vetor vet);

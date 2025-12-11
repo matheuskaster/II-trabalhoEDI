@@ -53,5 +53,22 @@ double get_y_p1(Segmento s);
 /// @return Retorna um número double com o valor do 'y'
 double get_y_p2(Segmento s);
 
+/// @brief Acessa um segmento, olha qual é o id dele e o retorna.
+/// @param s É o ponteiro para o segmento que se deseja encontrar o id.
+/// @return Retorna um número inteiro, que corresponde ao identificador do segmento.
+int get_id_segmento(Segmento s);
+
+/// @brief Pega um segmento, clona ele igualziho, só que com um id único, e altera a coordenada dele.
+/// @param seg É o ponteiro para o segmento.
+/// @param dx É o número que será adicionado ao valor da coordenada no eixo 'x', para resultar na posição que o clone estará localizado.
+/// @param dy É o número que será adicionado ao valor da coordenada no eixo 'y', para resultar na posição que o clone estará localizado.
+/// @return O segmento clone.
+Segmento clona_segmento(Segmento seg, double dx, double dy);
+
+/// @brief Libera toda a memória referente ao segmento e a memória que ele mesmo utiliza dentro dele.
+/// @param s É um ponteiro que aponta para o segmento, que toda a memória reservada relacionada a ele, será disponibilizada novamente para outras utilizações.
+void libera_segmento (Segmento s);
+
+
 #endif
 

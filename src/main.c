@@ -193,5 +193,7 @@ int main(int argc, char *argv[]) {
     if (file_svg_qry) fclose(file_svg_qry);
     if (file_txt)     fclose(file_txt);
 
+    libera_lista(chao);
+    
     return 0;
 }
