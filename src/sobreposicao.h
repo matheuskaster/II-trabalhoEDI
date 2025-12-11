@@ -30,5 +30,8 @@ double distancia_ao_quadrado(double x1, double y1, double x2, double y2);
 /// @return Retorna a bounding box certinha de um polígono genérico.
 ///bounding_box limite_poligono(double xmin, double ymin, double xmax, double ymax);
 
+// protótipo usado pela árvore de segmentos — retorna a relação lateral entre dois segmentos
+int lado_ponto_relacao_segmento (Segmento st, Segmento sr, double bx, double by);
+
 #endif
 

@@ -76,6 +76,32 @@ void insere_lista (Lista l, Geometria g) {
     ((lista*)l)->tam++;
 }
 
+void remove_forma_lista(Lista l, Geometria g) {
+    if (((lista*)l)->inicio == NULL) return;
+    pont ant = NULL;
+    pont atual = ((lista*)l)->inicio;
+    while (atual != NULL && atual->chave != g) {
+        ant = atual;
+        atual = atual->prox;
+    }
+    if (atual == NULL) return;
+    if (ant == NULL) {
+        ((lista*)l)->inicio = atual->prox;
+    } else {
+        ant->prox = atual->prox;
+    }
+
+    if (atual == ((lista*)l)->fim) {
+        ((lista*)l)->fim = ant;
+    }
+
+    if (((lista*)l)->percorre == atual) {
+        ((lista*)l)->percorre = atual->prox; 
+    }
+    free(atual);
+    ((lista*)l)->tam--;
+}
+
 Geometria remove_lista (Lista l) {
     if (((lista*)l)->inicio == NULL) {
         printf("Tentativa falha de pegar um elemento da lista. \n");

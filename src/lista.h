@@ -34,6 +34,11 @@ int tam_lista(Lista l);
 /// @param n O conteúdo que será inserido na lista, podendo ser uma variável de qualquer tipo.
 void insere_lista(Lista l, Geometria g);
 
+/// @brief Ao receber uma forma genérica, ele a encontra e a remove da lista.
+/// @param l É o ponteiro que aponta para a lista.
+/// @param g É o ponteiro que aponta para a geometria que será removida da lista.
+void remove_forma_lista(Lista l, Geometria g);
+
 /// @brief Remove o elemento do início da lista
 /// @param f É um ponteiro que aponta para a lista l.
 Geometria remove_lista (Lista l);

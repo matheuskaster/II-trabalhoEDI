@@ -33,19 +33,20 @@ void qry (Lista chao, FILE* file_qry, FILE* file_svg_qry, FILE* file_txt, char* 
         else if (strcmp(comando, "d") == 0) {
             double x, y;
             char sfx[8];
-            sscanf(linha, "d %lf %lf %s", &x, &y, sfx);
+            /* limit string width to avoid overflow */
+            sscanf(linha, "d %lf %lf %7s", &x, &y, sfx);
             d(x, y, sfx, chao, file_txt, file_svg_qry, vet, path_svg_qry, tipo_ordenacao, menos_i);
         }
         else if (strcmp(comando, "p") == 0) {
             double x, y;
             char cor[8], sfx[8];
-            sscanf(linha,"p %lf %lf %s %s", &x, &y, cor, sfx);
+            sscanf(linha,"p %lf %lf %7s %7s", &x, &y, cor, sfx);
             p(x, y, cor, sfx, chao, file_txt, file_svg_qry, vet, path_svg_qry, tipo_ordenacao, menos_i);
         }
         else if (strcmp(comando, "cln") == 0) {
             double x, y, dx, dy;
             char sfx[8];
-            sscanf(linha, "cln %lf %lf %lf %lf %s", &x, &y, &dx, &dy, sfx);
+            sscanf(linha, "cln %lf %lf %lf %lf %7s", &x, &y, &dx, &dy, sfx);
             cln(x, y, dx, dy, sfx, chao, file_txt, file_svg_qry, vet, path_svg_qry, tipo_ordenacao, menos_i);
         }
     }

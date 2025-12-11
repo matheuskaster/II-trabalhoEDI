@@ -33,6 +33,11 @@ double get_x_ponto(Ponto p);
 /// @return Retorna um número double com o valor do 'y'.
 double get_y_ponto(Ponto p);
 
+/// @brief Acessa um segmento, olha qual é o id dele e o retorna.
+/// @param s É o ponteiro para o segmento que se deseja encontrar o id.
+/// @return Retorna um número inteiro, que corresponde ao identificador do segmento.
+int get_id_segmento(Segmento s);
+
 /// @brief Recebe um segmento qualquer e retorna qual é o valor do x do ponto 1, qual é a posição desse ponto pertencente ao segmento, no eixo 'x'.
 /// @param s É um ponteiro que aponta para o segmento.
 /// @return Retorna um número double com o valor do 'x'
@@ -53,17 +58,18 @@ double get_y_p1(Segmento s);
 /// @return Retorna um número double com o valor do 'y'
 double get_y_p2(Segmento s);
 
-/// @brief Acessa um segmento, olha qual é o id dele e o retorna.
-/// @param s É o ponteiro para o segmento que se deseja encontrar o id.
-/// @return Retorna um número inteiro, que corresponde ao identificador do segmento.
-int get_id_segmento(Segmento s);
+/// @brief Troca a cor, colocando a cor passada por parâmtro, como a nova cor.
+/// @param seg É um ponteiro que aponta para o segmento que terá sua cor trocada.
+/// @param cor É a nova cor, que o segmento passará a ter.
+void set_cor_segmento(Segmento seg, char *cor);
 
 /// @brief Pega um segmento, clona ele igualziho, só que com um id único, e altera a coordenada dele.
 /// @param seg É o ponteiro para o segmento.
 /// @param dx É o número que será adicionado ao valor da coordenada no eixo 'x', para resultar na posição que o clone estará localizado.
 /// @param dy É o número que será adicionado ao valor da coordenada no eixo 'y', para resultar na posição que o clone estará localizado.
+/// @param id É o id que o segmento vai possuir
 /// @return O segmento clone.
-Segmento clona_segmento(Segmento seg, double dx, double dy);
+Segmento clona_segmento(Segmento seg, double dx, double dy, int id);
 
 /// @brief Libera toda a memória referente ao segmento e a memória que ele mesmo utiliza dentro dele.
 /// @param s É um ponteiro que aponta para o segmento, que toda a memória reservada relacionada a ele, será disponibilizada novamente para outras utilizações.

@@ -358,12 +358,11 @@ void inverte_cores_forma(Geometria g) {
         set_corp_retangulo(((geometria*)g)->forma, cbr);
     }
     else if (((geometria*)g)->tipo == 'l') {
-        Linha l = get_info_forma;
-        char *cor = (char*)malloc(sizeof(char)*8);
-        *cor = get_cor_linha(l);
-        if (cor[0] != '#') return;
+        Linha l = get_info_forma(g);
+        char *cor = get_cor_linha(l);
+        if (cor == NULL || cor[0] != '#') return;
         int R, G, B;
-        sscanf(cor, "#%02x%02x%02x", &R, &G, &B);
+        if (sscanf(cor, "#%02x%02x%02x", &R, &G, &B) != 3) return;
         int R_complem = 255 - R;
         int G_complem = 255 - G;
         int B_complem = 255 - B;

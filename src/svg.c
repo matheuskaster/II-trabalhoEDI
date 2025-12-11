@@ -62,10 +62,11 @@ void desenha_forma_svg (FILE* arq_svg, Geometria f) {
 
 void desenha_poligono_explosao (FILE* svg, Poligono p) {
     if (svg == NULL || p == NULL) return;
-
+    
     fprintf(svg, "\t<polygon points=\"");
     int qtd = get_qtd_pontos_poligono(p);
-
+    if (qtd == 0) return;
+    
     for (int i = 0; i < qtd; i++) {
         Ponto ponto = get_ponto_poligono(p, i);
         fprintf(svg, "%lf,%lf ", get_x_ponto(ponto), get_y_ponto(ponto));

@@ -6,7 +6,11 @@ void insertion_sort(void** vet, int ini, int fim, Comparador cmp) {
         void* aux = vet[i];
         int j = i - 1;
 
-        while (j >= ini && cmp(&aux, &vet[j]) == -1) { 
+        /* cmp expects pointers to elements (const void*). For an array of
+           void*, the element type is void*, so we pass the address of the
+           element (void**) to the comparator. The comparator must cast
+           accordingly. The comparator returns negative/positive/zero. */
+        while (j >= ini && cmp(&aux, &vet[j]) < 0) {
             vet[j + 1] = vet[j];
             j--;
         }
@@ -33,6 +37,7 @@ void merge_sort (void** vetor, void** aux, int ini, int fim, int menos_i, Compar
     int k = ini;
 
     while (i <= meio && j <= fim) {
+        /* cmp returns negative if first < second */
         if (cmp(&vetor[i], &vetor[j]) <= 0) {
             aux[k] = vetor[i];
             i++;

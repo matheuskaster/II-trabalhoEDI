@@ -15,6 +15,10 @@
 /// anteparos das outras formas do jogo.
 void a(int i, int j, char direcao, Lista chao, FILE *file_txt, Vetor vet);
 
+/// @brief Cria quatro limites (segmentos) para formar uma "caixa infinita" usada pelo algoritmo da bomba.
+/// @param vet Vetor onde serão inseridos os segmentos-limite.
+void cria_caixa_infinita(Vetor vet);
+
 /// @brief Faz o processo da bomba de destruição.
 /// @param x A posição no eixo 'x' em que a bomba caiu.
 /// @param y A posição no eixo 'y' em que a bomba caiu.

@@ -93,4 +93,5 @@ void geo (Lista chao, FILE* arq_geo) {
         }
     }
     armazena_ultimo_id (ultimo_id);
+    if (ts != NULL) libera_estilo(ts);
 }

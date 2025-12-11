@@ -5,7 +5,7 @@
 /// vai pro endereço de memória que está apontando essa variável e os valores em parenteses passados após a escrita do comparador tem que ser variáveis
 /// do tipo void*, porque a função vai tranformá-las no tipo vertice* e ver qual é o ângulo, distância e tipo da variável para poder ordená-las de
 /// a cordo com a maneira que foi solicitado. Retornando os valores inteiros: -1 se for antes, 1 se for depois e 0 se tudo forem iguais.
-typedef int (*Comparador)(void* a, void* b);
+typedef int (*Comparador)(const void* a, const void* b);
 
 /// @brief O merge sort é um algoritmo de ordenação que, por dividir o vetor e depois conquistá-lo, consegue realizar a ordenação tanto no melhor,
 /// quanto no pior caso no tempo de nlogn. Complexidade de O(n), pois utiliza um vetor auxiliar que consome memória. Por fim, ele é estável, por 

@@ -41,15 +41,20 @@ void cria_caixa_infinita(Vetor vet) {
 
 
 
-int compara_vertices (void* a, void* b) {
-    vertice* v1 = *(vertice**) a;
-    vertice* v2 = *(vertice**) b;
+int compara_vertices (const void* a, const void* b) {
+    /* a and b are pointers to elements of type vertice* (i.e., vertice**)
+       when sorting an array of vertice*. So cast accordingly. */
+    vertice* const * pv1 = (vertice* const*) a;
+    vertice* const * pv2 = (vertice* const*) b;
+    vertice* v1 = *pv1;
+    vertice* v2 = *pv2;
 
     if (v1->angulo < v2->angulo - 1e-9) return -1;
     if (v1->angulo > v2->angulo + 1e-9) return 1;
 
-    if (v1->dist > v2->dist + 1e-9) return -1;
-    if (v1->dist < v2->dist - 1e-9) return 1;
+    /* Menor distância deve vir primeiro (ponto mais próximo) */
+    if (v1->dist < v2->dist - 1e-9) return -1;
+    if (v1->dist > v2->dist + 1e-9) return 1;
 
     if (v1->tipo == 'i' && v2->tipo == 'f') return -1;
     if (v1->tipo == 'f' && v2->tipo == 'i') return 1;
@@ -62,16 +67,16 @@ void a (int i, int j, char direcao, Lista chao, FILE* arq_txt, Vetor vet) {
     Segmento s = NULL;
     int id;
     int ultimo_id = get_ultimo_id();
-    char tipo_anteparo = 'a';
     double x, y, x1, y1, x2, y2, raio, xw, yh;
+
     while (tem_proximo_lista(chao)) {
         Geometria g = get_proximo_lista(chao);
         id = get_id_forma(g);
         if (i <= id && id <= j) {
             char tipo = get_tipo_forma(g);
-            
+
             switch (tipo) {
-            case 'c': {
+                case 'c': {
                     Circulo c = get_info_forma(g);
                     x = get_x_circulo(c);
                     y = get_y_circulo(c);
@@ -81,98 +86,88 @@ void a (int i, int j, char direcao, Lista chao, FILE* arq_txt, Vetor vet) {
                         y1 = y - raio;
                         x2 = x;
                         y2 = y + raio;
-                    }
-                    else if (direcao == 'h') {
+                    } else if (direcao == 'h') {
                         x1 = x - raio;
                         y1 = y;
                         x2 = x + raio;
                         y2 = y;
                     }
-
-                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
-                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x1, y1, x2, y2);
-
-                break;
-            }
-            case 'r': {
-                Retangulo r = get_info_forma(g);
-                x = get_x_retangulo(r);
-                y = get_y_retangulo(r);
-                xw = x + get_w_retangulo(r);
-                yh = y + get_h_retangulo(r);
-                char tipo_anteparo = 'a';
-                char* cor = {"#000000"};
-                s = transforma_anteparo (ultimo_id++, x, y, xw, y, tipo_anteparo, cor, g);
-
-                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
-                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x, y, xw, y);
-                insere_vet(vet, s);
-                s = transforma_anteparo (ultimo_id++, xw, y, xw, yh, tipo_anteparo, cor, g);
-
-                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
-                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, xw, y, xw, yh);
-                insere_vet(vet, s);
-                s = transforma_anteparo (ultimo_id++, xw, yh, x, yh, tipo_anteparo, cor, g);
-
-                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
-                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, xw, yh, x, yh);
-                insere_vet(vet, s);
-                s = transforma_anteparo (ultimo_id++, x, yh, x, y, tipo_anteparo, cor, g);
-
-                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
-                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x, yh, x, y);
-                insere_vet(vet, s);
-                break;
-            }
-            case 'l': {
-                Linha l = get_info_forma(g);
-                x1 = get_x1_linha(l);
-                y1 = get_y1_linha(l);
-                x2 = get_x2_linha(l);
-                y2 = get_y2_linha(l);
-                
-                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
-                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x1, y1, x2, y2);
-
-                break;
-            }
-            case 't': {
-                Texto t = get_info_forma(g);
-                
-                char a = get_a_texto(t);
-                char* txto = get_txto(t);
-                double comp = strlen(txto) * 10.0;
-                
-                double x = get_x_texto(t);
-                double y = get_y_texto(t);
-                
-                if (a == 'i') {
-                    x1 = x;
-                    x2 = x + comp;
-                } else if (a == 'm') {
-                    x1 = x - (comp / 2.0);
-                    x2 = x + (comp / 2.0);
-                } else if (a == 'f') {
-                    x1 = x - comp;
-                    x2 = x;
+                    fprintf(arq_txt, "Pintura efetuada transformando o cículo de id %d em anteparo.\n", id);
+                    fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x1, y1, x2, y2);
+                    break;
                 }
-                
-                y1 = y;
-                y2 = y;
-                
-                fprintf(arq_txt, "Comando assionado 'a' transformando o retângulo de id %d.\n", id);
-                fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x1, y1, x2, y2);
+                case 'r': {
+                    Retangulo r = get_info_forma(g);
+                    x = get_x_retangulo(r);
+                    y = get_y_retangulo(r);
+                    xw = x + get_w_retangulo(r);
+                    yh = y + get_h_retangulo(r);
+                    char tipo_anteparo = 'a';
+                    char* cor = {"#000000"};
+                    s = transforma_anteparo (ultimo_id++, x, y, xw, y, tipo_anteparo, cor, g);
+                    fprintf(arq_txt, "Pintura efetuada transformando o retângulo de id %d em anteparo.\n", id);
+                    fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x, y, xw, y);
+                    insere_vet(vet, s);
+                    s = transforma_anteparo (ultimo_id++, xw, y, xw, yh, tipo_anteparo, cor, g);
+                    fprintf(arq_txt, "Pintura efetuada transnsformando o retângulo de id %d em anteparo.\n", id);
+                    fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, xw, y, xw, yh);
+                    insere_vet(vet, s);
+                    s = transforma_anteparo (ultimo_id++, xw, yh, x, yh, tipo_anteparo, cor, g);
+                    fprintf(arq_txt, "Pintura efetuada transnsformando o retângulo de id %d em anteparo.\n", id);
+                    fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, xw, yh, x, yh);
+                    insere_vet(vet, s);
+                    s = transforma_anteparo (ultimo_id++, x, yh, x, y, tipo_anteparo, cor, g);
+                    fprintf(arq_txt, "Pintura efetuada transnsformando o retângulo de id %d em anteparo.\n", id);
+                    fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x, yh, x, y);
+                    insere_vet(vet, s);
+                    break;
+                }
+                case 'l': {
+                    Linha l = get_info_forma(g);
+                    x1 = get_x1_linha(l);
+                    y1 = get_y1_linha(l);
+                    x2 = get_x2_linha(l);
+                    y2 = get_y2_linha(l);
+                    fprintf(arq_txt, "Pintura efetuada transformando a linha de id %d em anteparo.\n", id);
+                    fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x1, y1, x2, y2);
+                    break;
+                }
+                case 't': {
+                    Texto t = get_info_forma(g);
+                    char a = get_a_texto(t);
+                    char* txto = get_txto(t);
+                    double comp = strlen(txto) * 10.0;
+                    double x = get_x_texto(t);
+                    double y = get_y_texto(t);
+                    if (a == 'i') {
+                        x1 = x;
+                        x2 = x + comp;
+                    } else if (a == 'm') {
+                        x1 = x - (comp / 2.0);
+                        x2 = x + (comp / 2.0);
+                    } else if (a == 'f') {
+                        x1 = x - comp;
+                        x2 = x;
+                    }
+                    y1 = y;
+                    y2 = y;
+                    fprintf(arq_txt, "Pintura efetuada transformando o texto de id %d em anteparo.\n", id);
+                    fprintf(arq_txt, "O anteparo formado possui id %d, com extremos nas coordenadas x_min: %.1f e y_min: %.1f e x_min: %.1f e y_min: %.1f.\n", ultimo_id - 1, x1, y1, x2, y2);
+                    break;
+                }
+            }
 
-                break;
-            }
-            }
-            libera_forma(g);
+            /* Criar o anteparo para tipos que não são retângulo ("r") */
             if (tipo != 'r') {
                 char tipo_anteparo = 'a';
                 char* cor = {"#000000"};
                 s = transforma_anteparo (ultimo_id++, x1, y1, x2, y2, tipo_anteparo, cor, g);
                 insere_vet(vet, s);
             }
+
+            /* Remover e liberar a forma original (para evitar double-free na lista) */
+            remove_forma_lista(chao, g);
+            libera_forma(g);
         }
     }
     armazena_ultimo_id(ultimo_id);
@@ -185,7 +180,7 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
     int qtd_v = 0;
 
     Segmento s;
-    double x_ponto1, y_ponto1, x_ponto2, y_ponto2, d1, d2;
+    double x_ponto1, y_ponto1, x_ponto2, y_ponto2;
     double ang1, ang2;
     for (int i = 0; i < qtd_anteparos; i++) {
         s = get_segmento_qualquer(vet, i);
@@ -193,8 +188,7 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
         y_ponto1 = get_y_p1 (s);
         x_ponto2 = get_x_p2 (s);
         y_ponto2 = get_y_p2 (s);
-        d1 = distancia_ao_quadrado (x_ponto1, y_ponto1, x_bomba, y_bomba);
-        d2 = distancia_ao_quadrado (x_ponto2, y_ponto2, x_bomba, y_bomba);
+    /* distances not currently used */
         
         ang1 = atan2(y_ponto1 - y_bomba, x_ponto1 - x_bomba);
         if (ang1 < 0) ang1 += 2 * PI;
@@ -209,38 +203,58 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
             double menor_ang = (ang1 > ang2) ? ang2 : ang1;
             double x_menor_ang = (ang1 > ang2) ? x_ponto2 : x_ponto1;
             double y_menor_ang = (ang1 > ang2) ? y_ponto2 : y_ponto1;
-            
-            Ponto p_corte = interseccao_raio_segmento(x_bomba, y_bomba, 0.0, s); 
-            vv[qtd_v].x = x_maior_ang;
-            vv[qtd_v].y = y_maior_ang;
-            vv[qtd_v].angulo = maior_ang;
-            vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_maior_ang, y_maior_ang);
-            vv[qtd_v].tipo = 'i';
-            vv[qtd_v].original = s;
-            qtd_v++;
-            vv[qtd_v].x = get_x_ponto(p_corte);
-            vv[qtd_v].y = get_y_ponto(p_corte);
-            vv[qtd_v].angulo = 2 * PI;
-            vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, get_x_ponto(p_corte), get_y_ponto(p_corte));
-            vv[qtd_v].tipo = 'f';
-            vv[qtd_v].original = s;
-            qtd_v++;
-            
-            vv[qtd_v].x = get_x_ponto(p_corte);
-            vv[qtd_v].y = get_y_ponto(p_corte);
-            vv[qtd_v].angulo = 0.0;
-            vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, get_x_ponto(p_corte), get_y_ponto(p_corte));
-            vv[qtd_v].tipo = 'i';
-            vv[qtd_v].original = s;
-            qtd_v++;
-            vv[qtd_v].x = x_menor_ang;
-            vv[qtd_v].y = y_menor_ang;
-            vv[qtd_v].angulo = menor_ang;
-            vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_menor_ang, y_menor_ang);
-            vv[qtd_v].tipo = 'f';
-            vv[qtd_v].original = s;
-            qtd_v++;
-            free(p_corte);
+
+            Ponto p_corte = interseccao_raio_segmento(x_bomba, y_bomba, 0.0, s);
+            /* If intersection computation failed, fallback to inserting endpoints only to avoid NaNs */
+            if (isnan(get_x_ponto(p_corte)) || isnan(get_y_ponto(p_corte))) {
+                free(p_corte);
+                vv[qtd_v].x = x_maior_ang;
+                vv[qtd_v].y = y_maior_ang;
+                vv[qtd_v].angulo = maior_ang;
+                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_maior_ang, y_maior_ang);
+                vv[qtd_v].tipo = 'i';
+                vv[qtd_v].original = s;
+                qtd_v++;
+
+                vv[qtd_v].x = x_menor_ang;
+                vv[qtd_v].y = y_menor_ang;
+                vv[qtd_v].angulo = menor_ang;
+                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_menor_ang, y_menor_ang);
+                vv[qtd_v].tipo = 'f';
+                vv[qtd_v].original = s;
+                qtd_v++;
+            } else {
+                vv[qtd_v].x = x_maior_ang;
+                vv[qtd_v].y = y_maior_ang;
+                vv[qtd_v].angulo = maior_ang;
+                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_maior_ang, y_maior_ang);
+                vv[qtd_v].tipo = 'i';
+                vv[qtd_v].original = s;
+                qtd_v++;
+                vv[qtd_v].x = get_x_ponto(p_corte);
+                vv[qtd_v].y = get_y_ponto(p_corte);
+                vv[qtd_v].angulo = 2 * PI;
+                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, get_x_ponto(p_corte), get_y_ponto(p_corte));
+                vv[qtd_v].tipo = 'f';
+                vv[qtd_v].original = s;
+                qtd_v++;
+
+                vv[qtd_v].x = get_x_ponto(p_corte);
+                vv[qtd_v].y = get_y_ponto(p_corte);
+                vv[qtd_v].angulo = 0.0;
+                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, get_x_ponto(p_corte), get_y_ponto(p_corte));
+                vv[qtd_v].tipo = 'i';
+                vv[qtd_v].original = s;
+                qtd_v++;
+                vv[qtd_v].x = x_menor_ang;
+                vv[qtd_v].y = y_menor_ang;
+                vv[qtd_v].angulo = menor_ang;
+                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_menor_ang, y_menor_ang);
+                vv[qtd_v].tipo = 'f';
+                vv[qtd_v].original = s;
+                qtd_v++;
+                free(p_corte);
+            }
         } else {
             if (ang1 < ang2) {
                 vv[qtd_v].x = x_ponto1;
@@ -285,7 +299,7 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
     if (tipo_ordenacao == 'q') {
         qsort(vpv, qtd_v, sizeof(vertice*), compara_vertices);
     } else if (tipo_ordenacao == 'm') {
-        vertice** aux = malloc (sizeof(vertice*) * qtd_v);
+        void** aux = malloc (sizeof(void*) * qtd_v);
         merge_sort(vpv, aux, 0, qtd_v - 1, menos_i, compara_vertices);
         free(aux);
     }
@@ -308,16 +322,26 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
             }
             if (biombo != NULL) {
                 Ponto p = interseccao_raio_segmento(x_bomba, y_bomba, v->angulo, biombo);
-                insere_ponto_poligono(area_explosao, p);
+                if (!isnan(get_x_ponto(p)) && !isnan(get_y_ponto(p))) {
+                    insere_ponto_poligono(area_explosao, p);
+                } else {
+                    free(p);
+                }
             }
             if (novo_biombo != NULL) {
                 Ponto p = interseccao_raio_segmento(x_bomba, y_bomba, v->angulo, novo_biombo);
-                insere_ponto_poligono(area_explosao, p);
+                if (!isnan(get_x_ponto(p)) && !isnan(get_y_ponto(p))) {
+                    insere_ponto_poligono(area_explosao, p);
+                } else {
+                    free(p);
+                }
             }
             biombo = novo_biombo;
         }
-        Ponto p = transforma_ponto(v->x, v->y);
-        insere_ponto_poligono(area_explosao, p);
+        if (!isnan(v->x) && !isnan(v->y)) {
+            Ponto p = transforma_ponto(v->x, v->y);
+            insere_ponto_poligono(area_explosao, p);
+        }
     }
     free(vpv);
     free(vv);
@@ -326,42 +350,57 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
     return area_explosao;
 }
 
-void destroi (Lista chao, Poligono poly) {
+void destroi (Lista chao, Poligono poly, FILE* txt) {
     percorrer_do_inicio_lista(chao);
     while (tem_proximo_lista(chao)) {
         Geometria g = get_proximo_lista(chao);
         double x = get_x_forma(g);
         double y = get_y_forma(g);
+        int id = get_id_forma(g);
+        char tipo = get_tipo_forma(g);
         if (esta_dentro_poligono(poly, x, y)) {
+            remove_forma_lista(chao, g);
             libera_forma(g);
+            fprintf(txt, "Bomba explodida, destruindo a forma '%c' de id %d.\n", tipo, id);
         }
     }
 }
 
-void pinta (Lista chao, Poligono poly, char* cor) {
+/* Função que pinta as formas dentro de um polígono (helper). */
+void pinta (Lista chao, Poligono poly, char* cor, FILE* txt) {
     percorrer_do_inicio_lista(chao);
     while (tem_proximo_lista(chao)) {
         Geometria g = get_proximo_lista(chao);
         double x = get_x_forma(g);
         double y = get_y_forma(g);
+        int id = get_id_forma(g);
+        char tipo = get_tipo_forma(g);
         if (esta_dentro_poligono(poly, x, y)) {
             set_corb_forma(g, cor);
             set_corp_forma(g, cor);
+            fprintf(txt, "Bomba explodida, pintando a forma '%c' de id %d.\n", tipo, id);
         }
     }
 }
 
-void clona (Lista chao, Poligono poly, double dx, double dy) {
+/* Função que clona (helper) as formas dentro de um polígono. */
+void clona (Lista chao, Poligono poly, double dx, double dy, FILE* txt) {
     percorrer_do_inicio_lista(chao);
     while (tem_proximo_lista(chao)) {
         Geometria g = get_proximo_lista(chao);
         double x = get_x_forma(g);
         double y = get_y_forma(g);
+        int id = get_id_forma(g);
+        char tipo = get_tipo_forma(g);
         if (esta_dentro_poligono(poly, x, y)) {
+            int id_clone = get_ultimo_id() + 1;
             clona_forma(g, dx, dy);
+            fprintf(txt, "Bomba explodida, clonando a forma '%c' de id %d, formando uma forma do mesmo tipo, com id %d.\n", tipo, id, id_clone);
         }
     }
 }
+
+
 
 void d(double x, double y, char* sfx, Lista chao, FILE* txt, FILE* svg, Vetor vet, char* path_svg_qry, char tipo_ordenacao, int menos_i) {
     int max_seg = get_qtd_vet(vet);
@@ -369,22 +408,25 @@ void d(double x, double y, char* sfx, Lista chao, FILE* txt, FILE* svg, Vetor ve
     int qtd = 0;
     Poligono poly = explosao(x, y, vet, tipo_ordenacao, menos_i, atingidos, &qtd);
     for (int i = 0; i < qtd; i++) {
-        Segmento s = atingidos[i]; 
-        libera_segmento(s);
+        Segmento s = atingidos[i];
+        if (s == NULL) continue;
+        int id_seg = get_id_segmento(s);
+        fprintf(txt, "Bomba explodida, destruindo o anteparo de id %d.\n", id_seg);
     }
     if (strcmp(sfx, "-") == 0) {
         desenha_poligono_explosao(svg, poly);
     } else {
         char svg_poligono[256];
         sprintf(svg_poligono, "%s-%s.svg", path_svg_qry, sfx);
-        FILE* svg = fopen(svg_poligono, "w");
-        abre_svg(svg);
-        desenha_poligono_explosao(svg, poly);
-        fecha_svg(svg);
-        fclose(svg);
+        FILE* svgfile = fopen(svg_poligono, "w");
+        abre_svg(svgfile);
+        desenha_poligono_explosao(svgfile, poly);
+        fecha_svg(svgfile);
+        fclose(svgfile);
     }
-    destroi(chao, poly);
+    destroi(chao, poly, txt);
     libera_poligono(poly);
+    free(atingidos);
 }
 
 void p(double x, double y, char* cor, char* sfx, Lista chao, FILE* txt, FILE* svg, Vetor vet, char* path_svg_qry, char tipo_ordenacao, int menos_i) {
@@ -393,7 +435,9 @@ void p(double x, double y, char* cor, char* sfx, Lista chao, FILE* txt, FILE* sv
     int qtd = 0;
     Poligono poly = explosao(x, y, vet, tipo_ordenacao, menos_i, atingidos, &qtd);
     for (int i = 0; i < qtd; i++) {
-        Segmento s = atingidos[i]; 
+        Segmento s = atingidos[i];
+        int id_seg = get_id_segmento(s);
+        fprintf(txt, "Bomba explodida, pintando o anteparo de id %d.\n", id_seg);
         set_cor_segmento(s, cor);
     }
     if (strcmp(sfx, "-") == 0) {
@@ -407,7 +451,7 @@ void p(double x, double y, char* cor, char* sfx, Lista chao, FILE* txt, FILE* sv
         fecha_svg(svg);
         fclose(svg);
     }
-    pinta(chao, poly, cor);
+    pinta(chao, poly, cor, txt);
     libera_poligono(poly);
 }
 
@@ -417,8 +461,12 @@ void cln(double x, double y, double dx, double dy, char* sfx, Lista chao, FILE* 
     int qtd = 0;
     Poligono poly = explosao(x, y, vet, tipo_ordenacao, menos_i, atingidos, &qtd);
     for (int i = 0; i < qtd; i++) {
-        Segmento s = atingidos[i]; 
-        Segmento clone = clona_segmento(s, dx, dy);
+        Segmento s = atingidos[i];
+        int id_seg = get_id_segmento(s);
+        int id_clone = get_ultimo_id() + 1;
+        fprintf(txt, "Bomba explodida, clonando o anteparo de id %d, formando outro anteparo com id %d.\n", id_seg, id_clone);
+        armazena_ultimo_id(id_clone);
+        Segmento clone = clona_segmento(s, dx, dy, id_clone);
         insere_vet(vet, clone);
     }
     if (strcmp(sfx, "-") == 0) {
@@ -432,6 +480,6 @@ void cln(double x, double y, double dx, double dy, char* sfx, Lista chao, FILE* 
         fecha_svg(svg);
         fclose(svg);
     }
-    clona(chao, poly, dx, dy);
+    clona(chao, poly, dx, dy, txt);
     libera_poligono(poly);
 }

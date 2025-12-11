@@ -22,21 +22,21 @@ typedef struct {
 
 Estilo cria_estilo (char* family, char* weight, char* size) {
     estilo *ts = (estilo*) malloc (sizeof(estilo));
-    ts->family = (char*) malloc (sizeof(family)+1);
+    ts->family = (char*) malloc (strlen(family) + 1);
     if (ts->family == NULL) {
         printf ("Erro na alocação de memória ao criar a família");
         exit(1);
     }
     strcpy (ts->family, family);
 
-    ts->weight = (char*) malloc (sizeof(weight)+1);
+    ts->weight = (char*) malloc (strlen(weight) + 1);
     if (ts->weight == NULL) {
         printf ("Erro na alocação de memória ao criar a expessura");
         exit(1);
     }
     strcpy (ts->weight, weight);
 
-    ts->size = (char*) malloc (sizeof(size)+1);
+    ts->size = (char*) malloc (strlen(size) + 1);
     if (ts->size == NULL) {
         printf ("Erro na alocação de memória ao criar a tamanho");
         exit(1);
@@ -202,8 +202,12 @@ void libera_estilo (Estilo e) {
 }
 
 void libera_texto (Texto t) {
-    free(((texto*)t)->corb);
-    free(((texto*)t)->corp);
-    free(((texto*)t)->txto);
-    free((texto*)t);
+    if (t == NULL) return;
+    texto* _t = (texto*) t;
+    if (_t->corb) free(_t->corb);
+    if (_t->corp) free(_t->corp);
+    if (_t->txto) free(_t->txto);
+    /* libera o estilo associado ao texto (criado/copied em cria_texto) */
+    if (_t->ts) libera_estilo(_t->ts);
+    free(_t);
 }
