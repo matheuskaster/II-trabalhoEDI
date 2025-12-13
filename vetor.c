@@ -43,7 +43,7 @@ Segmento busca_vet (Vetor vet, int id) {
 }
 
 Segmento get_segmento_qualquer (Vetor vet, int posicao) {
-    return ((vetor*)vet)->anteparos[posicao];
+    return ((vetor*)vet)->anteparos[posicao + 4];
 }
 
 int get_qtd_vet (Vetor vet) {

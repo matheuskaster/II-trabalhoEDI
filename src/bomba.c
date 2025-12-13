@@ -188,11 +188,10 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
         y_ponto1 = get_y_p1 (s);
         x_ponto2 = get_x_p2 (s);
         y_ponto2 = get_y_p2 (s);
-    /* distances not currently used */
         
-        ang1 = atan2(y_ponto1 - y_bomba, x_ponto1 - x_bomba);
+        ang1 = atan2(y_bomba - y_ponto1, x_ponto1 - x_bomba);
         if (ang1 < 0) ang1 += 2 * PI;
-        ang2 = atan2(y_ponto2 - y_bomba, x_ponto2 - x_bomba);
+        ang2 = atan2(y_bomba - y_ponto2, x_ponto2 - x_bomba);
         if (ang2 < 0) ang2 += 2 * PI;
         
         if (fabs(ang1 - ang2) > PI) {
@@ -205,7 +204,6 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
             double y_menor_ang = (ang1 > ang2) ? y_ponto2 : y_ponto1;
 
             Ponto p_corte = interseccao_raio_segmento(x_bomba, y_bomba, 0.0, s);
-            /* If intersection computation failed, fallback to inserting endpoints only to avoid NaNs */
             if (isnan(get_x_ponto(p_corte)) || isnan(get_y_ponto(p_corte))) {
                 free(p_corte);
                 vv[qtd_v].x = x_maior_ang;
@@ -303,7 +301,12 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
         merge_sort(vpv, aux, 0, qtd_v - 1, menos_i, compara_vertices);
         free(aux);
     }
-    
+    for (int i = 0; i < qtd_v; i++) {
+        printf("Vertice %d: (%.1lf, %.1lf)\n", i, ((vertice*) vpv[i])->x, ((vertice*) vpv[i])->y);
+    }
+    for (int i = 0; i < qtd_v; i++) {
+        printf("Angulo: %.6lf, Dist: %.6lf, Tipo: %c\n", ((vertice*)vpv[i])->angulo, ((vertice*)vpv[i])->dist, ((vertice*)vpv[i])->tipo);
+    }
     Poligono area_explosao = cria_poligono();
     Arvore seg_ativos = cria_arvore();
     Segmento biombo = NULL;
