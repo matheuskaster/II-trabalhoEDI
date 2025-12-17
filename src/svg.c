@@ -64,17 +64,21 @@ void desenha_poligono_explosao (FILE* svg, Poligono p) {
     if (svg == NULL || p == NULL) return;
     
     fprintf(svg, "\t<polygon points=\"");
+    printf("\t<polygon points=\"");
     int qtd = get_qtd_pontos_poligono(p);
     if (qtd == 0) return;
     
     for (int i = 0; i < qtd; i++) {
         Ponto ponto = get_ponto_poligono(p, i);
         fprintf(svg, "%lf,%lf ", get_x_ponto(ponto), get_y_ponto(ponto));
+        printf("%lf,%lf ", get_x_ponto(ponto), get_y_ponto(ponto));
     }
     Ponto ponto = get_ponto_poligono(p, 0);
     fprintf(svg, "%lf,%lf ", get_x_ponto(ponto), get_y_ponto(ponto));
+    printf("%lf,%lf ", get_x_ponto(ponto), get_y_ponto(ponto));
 
     fprintf(svg, "\" fill=\"yellow\" opacity=\"0.3\" stroke=\"none\" />\n");
+    printf("\" fill=\"yellow\" opacity=\"0.3\" stroke=\"none\" />\n");
 }
 
 void fecha_svg(FILE* arq_svg) {

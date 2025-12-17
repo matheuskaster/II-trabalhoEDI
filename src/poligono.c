@@ -23,7 +23,7 @@ Poligono cria_poligono() {
         return NULL;
     }
     
-    return (Poligono)p;
+    return (poligono*)p;
 }
 
 void insere_ponto_poligono(Poligono poly, Ponto ponto) {

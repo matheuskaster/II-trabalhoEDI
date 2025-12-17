@@ -98,61 +98,51 @@ double distancia_ao_quadrado (double x1, double y1, double x2, double y2) {
 }
 
 bool p1_eh_inicio(double bx, double by, double x1, double y1, double x2, double y2) {
-    double ang1 = atan2(y1 - by, x1 - bx);
+    double ang1 = atan2(by - y1, x1 - bx);
     if (ang1 < 0) ang1 += 2 * PI;
-    double ang2 = atan2(y2 - by, x2 - bx);
+    double ang2 = atan2(by - y2, x2 - bx);
     if (ang2 < 0) ang2 += 2 * PI;
     
     if (ang1 < ang2) return true;
     return false;
 }
 
-
-int orientation(double px, double py, double qx, double qy, double rx, double ry) {
-    double val = (qy - py) * (rx - qx) - (qx - px) * (ry - qy);
-    if (fabs(val) < 1e-9) return 0;
-    return (val > 0) ? 1 : 2;
+double calculo_determinante (double xx, double xy, double yx, double yy, double zx, double zy) {
+    return xx*yy + xy*zx + yx*zy - zx*yy - xy*yx - xx*zy;
 }
 
-int lado_ponto_relacao_segmento (Segmento st, Segmento sr, double bx, double by) {
-    double st_x1 = get_x_p1(st);
-    double st_y1 = get_y_p1(st);
-    double st_x2 = get_x_p2(st);
-    double st_y2 = get_y_p2(st);
+double orientation(double x1, double y1, double x2, double y2, double x3, double y3) {
+    return (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
+}
 
-    double st_ini_x, st_ini_y, st_fim_x, st_fim_y;
-    if (p1_eh_inicio(bx, by, st_x1, st_y1, st_x2, st_y2)) {
-        st_ini_x = st_x1;
-        st_ini_y = st_y1;
-        st_fim_x = st_x2;
-        st_fim_y = st_y2;
-    } else {
-        st_ini_x = st_x2;
-        st_ini_y = st_y2;
-        st_fim_x = st_x1;
-        st_fim_y = st_y1;
-    }
+double lado_ponto_relacao_segmento(Segmento st, Segmento sr) {
+    double tx1 = get_x_p1(st);
+    double ty1 = get_y_p1(st);
 
-    double sr_x1 = get_x_p1(sr);
-    double sr_y1 = get_y_p1(sr);
-    double sr_x2 = get_x_p2(sr);
-    double sr_y2 = get_y_p2(sr);
-    
-    double sr_ini_x, sr_ini_y;
-    
-    if (p1_eh_inicio(bx, by, sr_x1, sr_y1, sr_x2, sr_y2)) {
-        sr_ini_x = sr_x1;
-        sr_ini_y = sr_y1;
-    } else {
-        sr_ini_x = sr_x2;
-        sr_ini_y = sr_y2;
-    }
+    double tx2 = get_x_p2(st);
+    double ty2 = get_y_p2(st);
 
-    int o = orientation(st_ini_x, st_ini_y, st_fim_x, st_fim_y, sr_ini_x, sr_ini_y);
-    
-    if (o == 2) return 1;
-    if (o == 1) return -1;
-    else return 0;
+    double rx1 = get_x_p1(sr);
+    double ry1 = get_y_p1(sr);
+
+    double d = calculo_determinante(rx1, ry1 * -1, tx1, ty1 * -1, tx2, ty2 * -1);
+
+    return d;
+}
+
+double lado_ponto_relacao_segmento2(Segmento st, Segmento sr) {
+    double tx1 = get_x_p1(st);
+    double ty1 = get_y_p1(st);
+
+    double tx2 = get_x_p2(st);
+    double ty2 = get_y_p2(st);
+
+    double rx1 = get_x_p2(sr);
+    double ry1 = get_y_p2(sr);
+
+    double d = calculo_determinante(rx1, ry1 * -1, tx1, ty1 * -1, tx2, ty2 * -1);
+
+    return d;
 }
 
 bool onSegment(double px, double py, double qx, double qy, double rx, double ry) {
@@ -178,10 +168,10 @@ bool segmentos_se_intersectam(Ponto p1, Ponto q1, Ponto p2, Ponto q2) {
     if (o4 == 0 && onSegment(p2x, p2y, q1x, q1y, q2x, q2y)) return true;
     return false;
 }
-
+/*
 Ponto get_interseccao_ponto(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
     double determinante = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-    if (determinante == 0) {
+    if (determinante < 1e-9 && determinante > -1e-9) {
         Ponto erro = transforma_ponto(NAN, NAN);
         return erro;
     }
@@ -207,4 +197,39 @@ Ponto interseccao_raio_segmento(double x_bomba, double y_bomba, double angulo, S
     double s_y2 = get_y_p2(s);
     Ponto impacto = get_interseccao_ponto(x_bomba, y_bomba, fim_raio_x, fim_raio_y, s_x1, s_y1, s_x2, s_y2);
     return impacto;
+}*/
+Ponto interseccao_raio_segmento(double x_bomba, double y_bomba, double angulo, Segmento s) {
+    double dx = cos(angulo);
+    double dy = sin(angulo);
+
+    double s_x1 = get_x_p1(s);
+    double s_y1 = get_y_p1(s);
+    double s_x2 = get_x_p2(s);
+    double s_y2 = get_y_p2(s);
+
+    double d = (s_x2 - s_x1)*dy - (-s_y2 - -s_y1)*dx;
+
+    if (fabs(d) < 1e-6) {
+        printf("Zeeiro exit.\n");
+        return NULL;
+        exit(1);
+    }
+    double u = ((x_bomba - s_x1)*dy - (-y_bomba - -s_y1)*dx) / d;
+    if (u < -1e-6 || u > 1.0 + 1e-6) {
+        printf("Primeiro exit.\n");
+        return NULL;
+        exit(1);
+    }
+
+    double px = s_x1 + u * (s_x2 - s_x1);
+    double py = s_y1 + u * (s_y2 - s_y1);
+
+    if ((px - x_bomba) * dx + (-py - -y_bomba) * dy < 0) {
+        printf("Segundo exit.\n");
+        return NULL;
+        exit(1);
+    }
+
+    Ponto ponto_interseccao = transforma_ponto(px, py);
+    return ponto_interseccao;
 }

@@ -42,19 +42,16 @@ void cria_caixa_infinita(Vetor vet) {
 
 
 int compara_vertices (const void* a, const void* b) {
-    /* a and b are pointers to elements of type vertice* (i.e., vertice**)
-       when sorting an array of vertice*. So cast accordingly. */
     vertice* const * pv1 = (vertice* const*) a;
     vertice* const * pv2 = (vertice* const*) b;
     vertice* v1 = *pv1;
     vertice* v2 = *pv2;
 
-    if (v1->angulo < v2->angulo - 1e-9) return -1;
-    if (v1->angulo > v2->angulo + 1e-9) return 1;
+    if (v1->angulo < v2->angulo) return -1;
+    if (v1->angulo > v2->angulo) return 1;
 
-    /* Menor distância deve vir primeiro (ponto mais próximo) */
-    if (v1->dist < v2->dist - 1e-9) return -1;
-    if (v1->dist > v2->dist + 1e-9) return 1;
+    if (v1->dist > v2->dist) return -1;
+    if (v1->dist < v2->dist) return 1;
 
     if (v1->tipo == 'i' && v2->tipo == 'f') return -1;
     if (v1->tipo == 'f' && v2->tipo == 'i') return 1;
@@ -157,7 +154,6 @@ void a (int i, int j, char direcao, Lista chao, FILE* arq_txt, Vetor vet) {
                 }
             }
 
-            /* Criar o anteparo para tipos que não são retângulo ("r") */
             if (tipo != 'r') {
                 char tipo_anteparo = 'a';
                 char* cor = {"#000000"};
@@ -165,7 +161,6 @@ void a (int i, int j, char direcao, Lista chao, FILE* arq_txt, Vetor vet) {
                 insere_vet(vet, s);
             }
 
-            /* Remover e liberar a forma original (para evitar double-free na lista) */
             remove_forma_lista(chao, g);
             libera_forma(g);
         }
@@ -206,51 +201,48 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
             Ponto p_corte = interseccao_raio_segmento(x_bomba, y_bomba, 0.0, s);
             if (isnan(get_x_ponto(p_corte)) || isnan(get_y_ponto(p_corte))) {
                 free(p_corte);
-                vv[qtd_v].x = x_maior_ang;
-                vv[qtd_v].y = y_maior_ang;
-                vv[qtd_v].angulo = maior_ang;
-                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_maior_ang, y_maior_ang);
-                vv[qtd_v].tipo = 'i';
-                vv[qtd_v].original = s;
-                qtd_v++;
-
-                vv[qtd_v].x = x_menor_ang;
-                vv[qtd_v].y = y_menor_ang;
-                vv[qtd_v].angulo = menor_ang;
-                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_menor_ang, y_menor_ang);
-                vv[qtd_v].tipo = 'f';
-                vv[qtd_v].original = s;
-                qtd_v++;
+                exit(1);
             } else {
+                double x_p_corte = get_x_ponto(p_corte);
+                double y_p_corte = get_y_ponto(p_corte);
+
+
+                int id_si = get_ultimo_id();
+                Segmento si = divide_segmentos(id_si, x_maior_ang, y_maior_ang, x_p_corte, y_p_corte, s);
+                int id_sf = id_si + 1;
+                Segmento sf = divide_segmentos(id_sf, x_p_corte, y_p_corte, x_menor_ang, y_menor_ang, s);
+                armazena_ultimo_id(id_sf);
+
                 vv[qtd_v].x = x_maior_ang;
                 vv[qtd_v].y = y_maior_ang;
                 vv[qtd_v].angulo = maior_ang;
                 vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_maior_ang, y_maior_ang);
                 vv[qtd_v].tipo = 'i';
-                vv[qtd_v].original = s;
+                vv[qtd_v].original = si;
                 qtd_v++;
-                vv[qtd_v].x = get_x_ponto(p_corte);
-                vv[qtd_v].y = get_y_ponto(p_corte);
+                vv[qtd_v].x = x_p_corte;
+                vv[qtd_v].y = y_p_corte;
                 vv[qtd_v].angulo = 2 * PI;
-                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, get_x_ponto(p_corte), get_y_ponto(p_corte));
+                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_p_corte, y_p_corte);
                 vv[qtd_v].tipo = 'f';
-                vv[qtd_v].original = s;
+                vv[qtd_v].original = si;
                 qtd_v++;
 
-                vv[qtd_v].x = get_x_ponto(p_corte);
-                vv[qtd_v].y = get_y_ponto(p_corte);
+                vv[qtd_v].x = x_p_corte;
+                vv[qtd_v].y = y_p_corte;
                 vv[qtd_v].angulo = 0.0;
-                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, get_x_ponto(p_corte), get_y_ponto(p_corte));
+                vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_p_corte, y_p_corte);
                 vv[qtd_v].tipo = 'i';
-                vv[qtd_v].original = s;
+                vv[qtd_v].original = sf;
                 qtd_v++;
                 vv[qtd_v].x = x_menor_ang;
                 vv[qtd_v].y = y_menor_ang;
                 vv[qtd_v].angulo = menor_ang;
                 vv[qtd_v].dist = distancia_ao_quadrado(x_bomba, y_bomba, x_menor_ang, y_menor_ang);
                 vv[qtd_v].tipo = 'f';
-                vv[qtd_v].original = s;
+                vv[qtd_v].original = sf;
                 qtd_v++;
+                //libera_segmento(s);
                 free(p_corte);
             }
         } else {
@@ -262,7 +254,6 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
                 vv[qtd_v].tipo = 'i';
                 vv[qtd_v].original = s;
                 qtd_v++;
-
                 vv[qtd_v].x = x_ponto2;
                 vv[qtd_v].y = y_ponto2;
                 vv[qtd_v].angulo = ang2;
@@ -270,6 +261,8 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
                 vv[qtd_v].tipo = 'f';
                 vv[qtd_v].original = s;
                 qtd_v++;
+                set_p1_segmento(x_ponto1, y_ponto1, s);
+                set_p2_segmento(x_ponto2, y_ponto2, s);
             } else {
                 vv[qtd_v].x = x_ponto2;
                 vv[qtd_v].y = y_ponto2;
@@ -278,7 +271,6 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
                 vv[qtd_v].tipo = 'i';
                 vv[qtd_v].original = s;
                 qtd_v++;
-                
                 vv[qtd_v].x = x_ponto1;
                 vv[qtd_v].y = y_ponto1;
                 vv[qtd_v].angulo = ang1;
@@ -286,6 +278,8 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
                 vv[qtd_v].tipo = 'f';
                 vv[qtd_v].original = s;
                 qtd_v++;
+                set_p1_segmento(x_ponto2, y_ponto2, s);
+                set_p2_segmento(x_ponto1, y_ponto1, s);
             }
         }
     }
@@ -301,49 +295,106 @@ Poligono explosao (double x_bomba, double y_bomba, Vetor vet, char tipo_ordenaca
         merge_sort(vpv, aux, 0, qtd_v - 1, menos_i, compara_vertices);
         free(aux);
     }
+    
     for (int i = 0; i < qtd_v; i++) {
         printf("Vertice %d: (%.1lf, %.1lf)\n", i, ((vertice*) vpv[i])->x, ((vertice*) vpv[i])->y);
     }
     for (int i = 0; i < qtd_v; i++) {
         printf("Angulo: %.6lf, Dist: %.6lf, Tipo: %c\n", ((vertice*)vpv[i])->angulo, ((vertice*)vpv[i])->dist, ((vertice*)vpv[i])->tipo);
     }
+
     Poligono area_explosao = cria_poligono();
     Arvore seg_ativos = cria_arvore();
-    Segmento biombo = NULL;
+    int i = 0;
+    while (( (vertice*) vpv[i])->angulo == 0.0) {
+        insere_arvore(seg_ativos, ((vertice*) vpv[i])->original);
+        i++;
+    }
+    Segmento s0 = segmento_mais_proximo(seg_ativos);
+    double x_inicio_segmento = get_x_p1(s0);
+    double y_inicio_segmento = get_y_p1(s0);
+    double x_fim_segmento = get_x_p2(s0);
+    double y_fim_segmento = get_y_p2(s0);
+    Ponto biombo = transforma_ponto(x_inicio_segmento, y_inicio_segmento);
+
     for (int i = 0; i < qtd_v; i++) {
         vertice* v = (vertice*) vpv[i];
+        printf("vértice : %d", i);
+        printf("(%lf, %lf) \n", v->x, v->y);
+        printf("biombo: (%lf, %lf) \n", get_x_ponto(biombo), get_y_ponto(biombo));
         if (v->tipo == 'i') {
-            insere_arvore(seg_ativos, v->original, x_bomba, y_bomba);
-        } else if (v->tipo == 'f') {
-            remove_arvore(seg_ativos, v->original, x_bomba, y_bomba);
-        }
-        Segmento novo_biombo = segmento_mais_proximo(seg_ativos);
-        if (novo_biombo != biombo) {
-            if (*qtd_atingidos == 0 || vetor_atingidos[(*qtd_atingidos) - 1] != novo_biombo) {
-                vetor_atingidos[*qtd_atingidos] = novo_biombo;
+            
+            Segmento atingido = s0;
+            s0 = segmento_mais_proximo(seg_ativos);
+            if (atingido != s0) {
+                vetor_atingidos[*qtd_atingidos] = s0;
                 (*qtd_atingidos)++;
             }
-            if (biombo != NULL) {
-                Ponto p = interseccao_raio_segmento(x_bomba, y_bomba, v->angulo, biombo);
-                if (!isnan(get_x_ponto(p)) && !isnan(get_y_ponto(p))) {
-                    insere_ponto_poligono(area_explosao, p);
-                } else {
-                    free(p);
-                }
+
+            if (v->angulo != 0) {
+                x_inicio_segmento = get_x_p1(v->original);
+                y_inicio_segmento = get_y_p1(v->original);
+                printf("Inserindo segmento: (%lf, %lf)\n", x_inicio_segmento, y_inicio_segmento);
+                x_fim_segmento = get_x_p2(v->original);
+                y_fim_segmento = get_y_p2(v->original);
+                printf("Inserindo segmento: (%lf, %lf)\n", x_fim_segmento, y_fim_segmento);
+
+                insere_arvore(seg_ativos, v->original);
             }
-            if (novo_biombo != NULL) {
-                Ponto p = interseccao_raio_segmento(x_bomba, y_bomba, v->angulo, novo_biombo);
-                if (!isnan(get_x_ponto(p)) && !isnan(get_y_ponto(p))) {
-                    insere_ponto_poligono(area_explosao, p);
-                } else {
-                    free(p);
-                }
+
+            x_inicio_segmento = get_x_p1(s0);
+            y_inicio_segmento = get_y_p1(s0);
+            printf("Ponto inicial do segmento mais próximo: (%lf, %lf)\n", x_inicio_segmento, y_inicio_segmento);
+            x_fim_segmento = get_x_p2(s0);
+            y_fim_segmento = get_y_p2(s0);
+            printf("Ponto final do segmento mais próximo: (%lf, %lf)\n", x_fim_segmento, y_fim_segmento);
+            //biombo = transforma_ponto(x_biombo, y_biombo);
+
+            if (calculo_determinante(v->x, v->y * -1, x_inicio_segmento, y_inicio_segmento * -1, x_fim_segmento, y_fim_segmento * -1) >= 0) {
+                Ponto y = interseccao_raio_segmento(x_bomba, y_bomba, v->angulo, s0);
+                insere_ponto_poligono(area_explosao, biombo);
+                Ponto V = transforma_ponto(v->x, v->y);
+                if (y == NULL) {
+                        y = V;
+                    } else {
+                        insere_ponto_poligono(area_explosao, y);
+                    }
+                insere_ponto_poligono(area_explosao, V);
+                biombo = V;
             }
-            biombo = novo_biombo;
         }
-        if (!isnan(v->x) && !isnan(v->y)) {
-            Ponto p = transforma_ponto(v->x, v->y);
-            insere_ponto_poligono(area_explosao, p);
+        else {
+            
+            remove_arvore(seg_ativos, v->original);
+            Segmento atingido = s0;
+            s0 = segmento_mais_proximo(seg_ativos);
+            if (atingido != s0) {
+                vetor_atingidos[*qtd_atingidos] = s0;
+                (*qtd_atingidos)++;
+            }
+            if (s0 != NULL) {
+                x_inicio_segmento = get_x_p1(s0);
+                y_inicio_segmento = get_y_p1(s0);
+                printf("Ponto inicial do segmento mais próximo: (%lf, %lf)", x_inicio_segmento, y_inicio_segmento);
+                x_fim_segmento = get_x_p2(s0);
+                y_fim_segmento = get_y_p2(s0);
+                printf("Ponto final do segmento mais próximo: (%lf, %lf)\n", x_fim_segmento, y_fim_segmento);
+                //biombo = transforma_ponto(x_biombo, y_biombo);
+            
+
+                if (calculo_determinante(v->x, v->y * -1, x_inicio_segmento, y_inicio_segmento * -1, x_fim_segmento, y_fim_segmento * -1) >= 0) {
+                    Ponto y = interseccao_raio_segmento(x_bomba, y_bomba, v->angulo, s0);
+                    insere_ponto_poligono(area_explosao, biombo);
+                    Ponto V = transforma_ponto(v->x, v->y);
+                    insere_ponto_poligono(area_explosao, V);
+                    if (y == NULL) {
+                        y = V;
+                    } else {
+                        insere_ponto_poligono(area_explosao, y);
+                    }
+                    biombo = y;
+                }
+            }
         }
     }
     free(vpv);
@@ -369,7 +420,6 @@ void destroi (Lista chao, Poligono poly, FILE* txt) {
     }
 }
 
-/* Função que pinta as formas dentro de um polígono (helper). */
 void pinta (Lista chao, Poligono poly, char* cor, FILE* txt) {
     percorrer_do_inicio_lista(chao);
     while (tem_proximo_lista(chao)) {
@@ -386,7 +436,6 @@ void pinta (Lista chao, Poligono poly, char* cor, FILE* txt) {
     }
 }
 
-/* Função que clona (helper) as formas dentro de um polígono. */
 void clona (Lista chao, Poligono poly, double dx, double dy, FILE* txt) {
     percorrer_do_inicio_lista(chao);
     while (tem_proximo_lista(chao)) {

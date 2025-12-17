@@ -23,6 +23,28 @@ Ponto transforma_ponto(double x, double y);
 /// @return Retorna o segmento que acabou de ser transformado
 Segmento transforma_anteparo(int id, double x1, double y1, double x2, double y2, char tipo, char* cor, Geometria g);
 
+/// @brief Como na hora de dividir os segmentos, eles tem que ser diferentes, eu utilizo essa função para criar o segmento dividido.
+/// @param id É um id único para o novo segmento que está sendo criado.
+/// @param x É a coordenada no eixo 'x' do primeiro ponto do novo segmento.
+/// @param y É a coordenada no eixo 'y' do primeiro ponto do novo segmento.
+/// @param x2 É a coordenada no eixo 'x' do segundo ponto do novo segmento.
+/// @param y2 É a coordenada no eixo 'y' do segundo ponto do novo segmento.
+/// @param s_original É o segmento original que está sendo dividido.
+/// @return Um segmento novo, que é o resultado da divisão do segmento original.
+Segmento divide_segmentos(int id, double x, double y, double x2, double y2, Segmento s_original);
+
+/// @brief Altera o valor do 'x' e do 'y' do ponto 1 de um segmento, para os passados por parâmetro.
+/// @param x É o novo valor do 'x' do ponto 1.
+/// @param y É o novo valor do 'y' do ponto 1.
+/// @param s É o segmento que terá o ponto 1 alterado.
+void set_p1_segmento(double x, double y, Segmento s);
+
+/// @brief Altera o valor do 'x' e do 'y' do ponto 2 de um segmento, para os passados por parâmetro.
+/// @param x É o novo valor do 'x' do ponto 2.
+/// @param y É o novo valor do 'y' do ponto 2.
+/// @param s É o segmento que terá o ponto 2 alterado.
+void set_p2_segmento(double x, double y, Segmento s);
+
 /// @brief Recebe um ponto qualquer, e retorna qual o valor do 'x' dele, onde ele se encontra no eixo 'x'.
 /// @param p É um ponteiro que aponta para o ponto.
 /// @return Retorna um número double com o valor do 'x'.
@@ -77,4 +99,3 @@ void libera_segmento (Segmento s);
 
 
 #endif
-

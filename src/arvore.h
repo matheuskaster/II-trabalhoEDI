@@ -18,14 +18,14 @@ Arvore cria_arvore();
 /// @param s É o segmento ativo que fará parte da árvore.
 /// @param bx É a posição no plano cartesiano onde a bomba se encontra, no eixo 'x'.
 /// @param by É a posição no plano cartesiano onde a bomba se encontra, no eixo 'y'.
-void insere_arvore(Arvore segmentos_ativos, Segmento s, double bx, double by);
+void insere_arvore(Arvore segmentos_ativos, Segmento s);
 
 /// @brief 
 /// @param segmentos_ativos É o ponteiro para a árvore que armazena e organiza todos os segmentos ativos.
 /// @param s É o segmento, que por não está mais ativo, deixará de fazer parte da árvore.
 /// @param bx É a posição no plano cartesiano onde a bomba se encontra, no eixo 'x'.
 /// @param by É a posição no plano cartesiano onde a bomba se encontra, no eixo 'y'.
-void remove_arvore(Arvore segmentos_ativos, Segmento s, double bx, double by);
+void remove_arvore(Arvore segmentos_ativos, Segmento s);
 
 /// @brief É a função que vai liberar a memória que foi alocada para a utilização dessa estrutura.
 /// @param segmentos_ativos É o ponteiro para a árvore que armazena e organiza todos os segmentos ativos.

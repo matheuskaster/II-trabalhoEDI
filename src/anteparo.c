@@ -45,6 +45,36 @@ Segmento transforma_anteparo (int id, double x1, double y1, double x2, double y2
     return s;
 }
 
+Segmento divide_segmentos (int id, double x, double y, double x2, double y2, Segmento s_original) {
+    segmento* novo = (segmento*) malloc (sizeof(segmento));
+    novo->id = id;
+    novo->tipo = ((segmento*)s_original)->tipo;
+    novo->cor = (char*) malloc(strlen(((((segmento*)s_original)->cor)))+1);
+    if (novo->cor == NULL) {
+        printf("Erro na alocação de memória da cor do segmento %d.\n", novo->id);
+        exit(1);
+    }
+    strcpy(novo->cor, ((segmento*)s_original)->cor);
+    novo->original = ((segmento*)s_original)->original;
+    novo->p1.x = x;
+    novo->p1.y = y;
+    novo->p2.x = x2;
+    novo->p2.y = y2;
+    return novo;
+}
+
+void set_p1_segmento(double x, double y, Segmento s) {
+    segmento* seg = (segmento*) s;
+    seg->p1.x = x;
+    seg->p1.y = y;
+}
+
+void set_p2_segmento(double x, double y, Segmento s) {
+    segmento* seg = (segmento*) s;
+    seg->p2.x = x;
+    seg->p2.y = y;
+}
+
 double get_x_ponto (Ponto p) {
     return (((ponto*)p)->x);
 }

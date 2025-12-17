@@ -55,7 +55,9 @@ void libera_vet (Vetor vet) {
     if (vet == NULL) return;
     vetor* v = (vetor*) vet;
     Segmento s; 
-    for (int i = 0 ; i < v->qtd; i++) libera_segmento(v->anteparos[i]);
+    
+    for (int i = 0 ; i < v->qtd; i++)
+        libera_segmento(v->anteparos[i]);
     free(v->anteparos);
     free(v);
 }

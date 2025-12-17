@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "arvore.h"
 #include "sobreposicao.h"
 
@@ -37,7 +38,7 @@ Arvore cria_arvore () {
 }
 
 
-pont insere_recursivo (pont raiz, Segmento s, double bx, double by) {
+pont insere_recursivo (pont raiz, Segmento s) {
     if (raiz == NULL) {
         elemento* novo = (elemento*)malloc(sizeof(elemento));
         if (novo == NULL) {
@@ -49,19 +50,22 @@ pont insere_recursivo (pont raiz, Segmento s, double bx, double by) {
         novo->dir = NULL;
         return novo;
     }
-    int lado = lado_ponto_relacao_segmento (raiz->chave, s, bx, by);
     
-    if (lado > 0) {
-        raiz->dir = insere_recursivo(raiz->dir, s, bx, by);
+    double d = lado_ponto_relacao_segmento(raiz->chave, s);
+    if (d == 0)
+        d = lado_ponto_relacao_segmento2(raiz->chave, s);
+    
+    if (d > 0) {
+        raiz->esq = insere_recursivo(raiz->esq, s);
     } else {
-        raiz->esq = insere_recursivo(raiz->esq, s, bx, by);
+        raiz->dir = insere_recursivo(raiz->dir, s);
     }
     return raiz;
 }
 
-void insere_arvore (Arvore segmentos_ativos, Segmento s, double bx, double by) {
+void insere_arvore (Arvore segmentos_ativos, Segmento s) {
     arvore* a = (arvore*) segmentos_ativos;
-    a->raiz = insere_recursivo (a->raiz, s, bx, by);
+    a->raiz = insere_recursivo (a->raiz, s);
 }
 
 pont filho_sucessor (pont raiz) {
@@ -71,7 +75,7 @@ pont filho_sucessor (pont raiz) {
     return atual;
 }
 
-pont remove_recursivo(pont raiz, Segmento s, double bx, double by) {
+pont remove_recursivo(pont raiz, Segmento s) {
     if (raiz == NULL) return raiz;
     if (raiz->chave == s) {
         if (raiz->esq == NULL) {
@@ -85,22 +89,25 @@ pont remove_recursivo(pont raiz, Segmento s, double bx, double by) {
         }
         pont aux = filho_sucessor (raiz->dir);
         raiz->chave = aux->chave;
-        raiz->dir = remove_recursivo(raiz->dir, aux->chave, bx, by);
+        raiz->dir = remove_recursivo(raiz->dir, aux->chave);
     }
     else {
-        int lado = lado_ponto_relacao_segmento(raiz->chave, s, bx, by);
-        if (lado > 0) {
-            raiz->dir = remove_recursivo(raiz->dir, s, bx, by);
+        double d = lado_ponto_relacao_segmento(raiz->chave, s);
+        if (d == 0)
+            d = lado_ponto_relacao_segmento2(raiz->chave, s);
+            
+        if (d > 0) {
+            raiz->esq = remove_recursivo(raiz->esq, s);
         } else {
-            raiz->esq = remove_recursivo(raiz->esq, s, bx, by);
+            raiz->dir = remove_recursivo(raiz->dir, s);
         }
     }
     return raiz;
 }
 
-void remove_arvore(Arvore segmentos_ativos, Segmento s, double bx, double by) {
+void remove_arvore(Arvore segmentos_ativos, Segmento s) {
     arvore* a = (arvore*) segmentos_ativos;
-    a->raiz = remove_recursivo(a->raiz, s, bx, by);
+    a->raiz = remove_recursivo(a->raiz, s);
 }
 
 void libera_recursivo(pont raiz) {

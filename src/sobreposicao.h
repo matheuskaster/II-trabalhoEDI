@@ -13,6 +13,16 @@
 /// @return Retorna um ponto, com coordenadas double, dentro do intervalo dos dois extremos do segmento, que representa o ponto de intersecção.
 Ponto interseccao_raio_segmento (double x_bomba, double y_bomba, double angulo, Segmento s);
 
+/// @brief Calcula o determinante de uma matriz 3x3, com o objetivo de ajudar a descobrir o lado que um ponto está em relação a um segmento.
+/// @param xx É o ponto x do primeiro vetor da matriz.
+/// @param xy É o ponto y do primeiro vetor da matriz.
+/// @param yx É o ponto x do segundo vetor da matriz.
+/// @param yy É o ponto y do segundo vetor da matriz.
+/// @param zx É o ponto x do terceiro vetor da matriz.
+/// @param zy É o ponto y do terceiro vetor da matriz.
+/// @return Retona o valor do determinante calculado.
+double calculo_determinante(double xx, double xy, double yx, double yy, double zx, double zy);
+
 /// @brief A função calcula o quadrado da distancia de dois pontos, utilizando pitágoras, mas como o objetivo não é descobrir a distância real, mas
 /// calcular uma distância para comparar com outra, não é necessário obter a raiz dessa soma de quadrados, e calcular a raiz exige mais do computador.
 /// @param x1 É o valor no eixo 'x' do primeiro ponto que será utilizado para calcular a distância.
@@ -22,16 +32,22 @@ Ponto interseccao_raio_segmento (double x_bomba, double y_bomba, double angulo, 
 /// @return Retorna o valor da distância elevada ao quadrado entre os dois pontos passados por parâmetro.
 double distancia_ao_quadrado(double x1, double y1, double x2, double y2);
 
-/// @brief Recebe os 4 pontos para delimitar uma bounding box, pega eles e os atribui para uma estrutura feita para guardar uma bounding box.
-/// @param xmin É o valor mínimo necessário no eixo 'x' para não estar completamente a esquerda da bounding box.
-/// @param ymin É o valor mínimo necessário no eixo 'y' para não estar completamente abaixo da bounding box.
-/// @param xmax É o valor máximo possível no eixo 'y' para não estar completamente a direita da bounding box.
-/// @param ymax É o valor máximo possível no eixo 'y' para não estar completamente acima da bounding box.
-/// @return Retorna a bounding box certinha de um polígono genérico.
-///bounding_box limite_poligono(double xmin, double ymin, double xmax, double ymax);
+/// @brief Calcula de que lado o ponto de inicio do novo segmento está em relação aos segmentos já presentes na árvore.
+/// @param st O novo segmento que está sendo inserido na árvore.
+/// @param sr O segmento já presente na árvore.
+/// @return O valor do determinante que indica de que lado o ponto está em relação ao segmento.
+double lado_ponto_relacao_segmento(Segmento st, Segmento sr);
 
-// protótipo usado pela árvore de segmentos — retorna a relação lateral entre dois segmentos
-int lado_ponto_relacao_segmento (Segmento st, Segmento sr, double bx, double by);
+/// @brief Calcula a interseção entre o raio de varredura e o segmento.
+/// @param s É um ponteiro para o segmento que será verificado.
+/// @param theta O ângulo em radianos do raio da varredura.
+/// @param xSaida É o ponteiro para a variável que armazenará a coordenada 'x' do ponto de interseção.
+/// @param ySaida É o ponteiro para a variável que armazenará a coordenada 'y' do ponto de interseção.
+/// @param bx É a coordenada no eixo 'x' da posição do plano cartesiano, local onde a bomba caiu.
+/// @param by É a coordenada no eixo 'y' da posição do plano cartesiano, local onde a bomba caiu.
+/// @return Retorna 1 se houve interseção, ou 0 caso contrário.
+int calcularInterseccaoRaio(Segmento s, double theta, double *xSaida, double *ySaida, double bx, double by);
 
 #endif
 
+double lado_ponto_relacao_segmento2(Segmento st, Segmento sr);
